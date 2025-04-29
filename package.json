@@ -1,0 +1,21 @@
+{
+  "type": "module",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.5.0",
+    "dropbox": "^10.34.0",
+    "express": "^5.1.0",
+    "fs-extra": "^11.3.0",
+    "mongodb": "^6.16.0",
+    "mongoose": "^8.14.0",
+    "multer": "^1.4.5-lts.2",
+    "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  },
+  "scripts": {
+    "start": "node backend/index.js",
+    "dev": "nodemon backend/index.js"
+  }
+}
