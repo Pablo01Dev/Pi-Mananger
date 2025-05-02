@@ -24,6 +24,7 @@ export const criarImovel = async (req, res) => {
   }
 };
 
+
 // Função para fazer upload de arquivos
 export const uploadArquivo = async (req, res) => {
   const { id, tipo } = req.params;
@@ -132,3 +133,5 @@ export const atualizarVideo = async (req, res) => {
     res.status(500).json({ erro: 'Erro ao atualizar o vídeo do imóvel: ' + err.message });
   }
 };
+
+
