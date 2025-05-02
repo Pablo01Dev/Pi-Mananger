@@ -135,3 +135,30 @@ export const atualizarVideo = async (req, res) => {
 };
 
 
+// Função para deletar um imóvel
+export const deletarImovel = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Encontre o imóvel no banco de dados e deleta
+    const imovel = await Imovel.findByIdAndDelete(id);  // Usando findByIdAndDelete
+
+    if (!imovel) {
+      return res.status(404).json({ erro: 'Imóvel não encontrado.' });
+    }
+
+    // Caminho onde os arquivos do imóvel estão armazenados
+    const pastaImovel = path.join(ROOT_UPLOAD_DIR, String(id));
+
+    // Verifica se a pasta existe e, se sim, exclui todos os arquivos dentro dela
+    if (fs.existsSync(pastaImovel)) {
+      await fs.remove(pastaImovel); // Remove a pasta e todos os arquivos dentro dela
+    }
+
+    res.status(200).json({ sucesso: 'Imóvel deletado com sucesso!' });
+  } catch (err) {
+    console.error(err);  // Log detalhado de erro no servidor
+    res.status(500).json({ erro: 'Erro ao deletar imóvel: ' + err.message });
+  }
+};
+

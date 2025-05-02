@@ -3,6 +3,7 @@ import express from 'express';
 import {
   criarImovel,
   listarImoveis,
+  deletarImovel,
   atualizarStatus,
   atualizarVideo
 } from '../controllers/imovelController.js';
@@ -13,5 +14,6 @@ router.get('/', listarImoveis);
 router.post('/', criarImovel);
 router.patch('/:id/status', atualizarStatus);
 router.patch('/:id/video', atualizarVideo);
+router.delete('/:id', deletarImovel);
 
 export default router;
