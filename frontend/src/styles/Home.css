@@ -1,0 +1,36 @@
+.lista-cards {
+    display: flex;
+    flex-direction: row;
+    gap: 2em;
+}
+
+.home-nav {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    padding: 0px ;
+}
+
+.home-nav ul{
+    display: flex;
+    flex-direction: row;
+    gap: 2em;
+}
+
+.home-nav ul li {
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: background 0.2s ease;
+  }
+  
+  .home-nav ul li:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .home-nav ul li.ativo {
+    background-color: #007bff;
+    color: white;
+    font-weight: bold;
+  }
+  

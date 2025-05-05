@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import '../styles/ListaImoveis.css'; // Crie esse CSS se quiser estilizar
+import '../styles/ListaImoveis.css';
+
+
 
 export default function ListaImoveis() {
   const [imoveis, setImoveis] = useState([]);
@@ -18,7 +20,7 @@ export default function ListaImoveis() {
 
   // Função para lidar com a seleção de imóveis
   const handleSelectImovel = (id) => {
-    setSelectedImoveis(prevState => 
+    setSelectedImoveis(prevState =>
       prevState.includes(id) ? prevState.filter(item => item !== id) : [...prevState, id]
     );
   };
@@ -42,13 +44,14 @@ export default function ListaImoveis() {
 
   return (
     <div className="lista-imoveis">
+
       <h2>Imóveis Cadastrados</h2>
       {imoveis.length === 0 ? (
         <p>Nenhum imóvel cadastrado ainda.</p>
       ) : (
         <>
-          <button 
-            onClick={handleDeleteSelected} 
+          <button
+            onClick={handleDeleteSelected}
             disabled={selectedImoveis.length === 0} // Desabilita o botão se nenhum imóvel for selecionado
             className="delete-button"
           >

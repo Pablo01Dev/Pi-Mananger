@@ -10,8 +10,8 @@ const imovelSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['disponivel', 'em andamento', 'vendido'],
-        default: 'disponivel'
+        enum: ['cadastrar', 'fazer video', 'fazer tour 360º', 'concluído'],
+        default: 'cadastrar'
     },
 
     imagens: [

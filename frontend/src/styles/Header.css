@@ -1,6 +1,19 @@
 .header {
-    background: #eee;
-    padding: 1rem;
-    border-bottom: 1px solid #ccc;
-  }
+  background: #eee;
+  padding: 1rem;
+  border-bottom: 1px solid #ccc;
+  display: flex;
+  justify-content: space-around;
   
+}
+
+.header div {
+  flex-direction: row;
+}
+
+
+.header nav ul {
+  display: flex;
+  flex-direction: row;
+  gap: 2em;
+}

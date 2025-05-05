@@ -1,6 +1,22 @@
-.form-container form {
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5); /* fundo escuro translúcido */
     display: flex;
-    flex-direction: column;
-    max-width: 50em ;
-    gap: 1em;
-}
+    align-items: center;
+    justify-content: center;
+    z-index: 1000; /* para ficar acima de tudo */
+  }
+  
+  .modal-content {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+  }
+  
