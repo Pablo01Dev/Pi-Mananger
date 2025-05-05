@@ -4,24 +4,24 @@ import '../styles/Home.css';
 import CardImovel from '../components/CardImovel';
 import NovoImovel from '../components/NovoImovel';
 
-
-
-
 export default function Home() {
   const [imoveis, setImoveis] = useState([]);
   const [mostrarModal, setMostrarModal] = useState(false);
   const [abaSelecionada, setAbaSelecionada] = useState('cadastrar');
 
-  const imoveisFiltrados = imoveis.filter(imovel =>
-    imovel.status.toLowerCase() === abaSelecionada.toLowerCase()
-  );
-
-
-  useEffect(() => {
+  const carregarImoveis = () => {
     axios.get('http://localhost:5000/api/imoveis')
       .then(response => setImoveis(response.data))
       .catch(error => console.error('Erro ao buscar imóveis:', error));
+  };
+
+  useEffect(() => {
+    carregarImoveis();
   }, []);
+
+  const imoveisFiltrados = imoveis.filter(imovel =>
+    imovel.status.toLowerCase() === abaSelecionada.toLowerCase()
+  );
 
   return (
     <div className="home-container">
@@ -34,14 +34,14 @@ export default function Home() {
             Cadastrar
           </li>
           <li
-            className={abaSelecionada === 'editar video' ? 'ativo' : ''}
-            onClick={() => setAbaSelecionada('editar video')}
+            className={abaSelecionada === 'fazer video' ? 'ativo' : ''}
+            onClick={() => setAbaSelecionada('fazer video')}
           >
             Vídeo
           </li>
           <li
-            className={abaSelecionada === 'tour 360' ? 'ativo' : ''}
-            onClick={() => setAbaSelecionada('tour 360')}
+            className={abaSelecionada === 'fazer tour 360º' ? 'ativo' : ''}
+            onClick={() => setAbaSelecionada('fazer tour 360º')}
           >
             Tour 360º
           </li>
@@ -53,8 +53,9 @@ export default function Home() {
           </li>
         </ul>
 
-
-        <button onClick={() => setMostrarModal(true)}>+ Novo Imóvel</button>
+        <button type="button" onClick={() => setMostrarModal(true)}>
+          + Novo Imóvel
+        </button>
       </div>
 
       <div className="lista-cards">
@@ -63,15 +64,12 @@ export default function Home() {
         ))}
       </div>
 
-
       {mostrarModal && (
         <NovoImovel
           onClose={() => setMostrarModal(false)}
           onSuccess={() => {
             setMostrarModal(false);
-            // atualiza lista após cadastro
-            axios.get('http://localhost:5000/api/imoveis')
-              .then(response => setImoveis(response.data));
+            carregarImoveis(); // Atualiza lista após novo cadastro
           }}
         />
       )}

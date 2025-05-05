@@ -17,6 +17,11 @@ export default function NovoImovel({ onClose, onSuccess }) {
         descricao,
         status,
       });
+      
+      if (!titulo.trim()) {
+        return alert('Preencha o título do imóvel!');
+      }
+
 
       const novoImovel = res.data;
 
@@ -64,10 +69,11 @@ export default function NovoImovel({ onClose, onSuccess }) {
         <label>Status</label>
         <select value={status} onChange={(e) => setStatus(e.target.value)}>
           <option value="cadastrar">Cadastrar</option>
-          <option value="editar video">Editar vídeo</option>
-          <option value="tour 360">Tour 360</option>
+          <option value="fazer video">Fazer vídeo</option>
+          <option value="fazer tour 360º">Fazer tour 360º</option>
           <option value="concluído">Concluído</option>
         </select>
+
 
         <label>Imagem</label>
         <input type="file" accept="image/*" onChange={(e) => setImagem(e.target.files[0])} />

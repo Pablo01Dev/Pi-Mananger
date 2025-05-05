@@ -47,11 +47,13 @@
   }
   
   .status-color {
-    width: 12px;
-    height: 12px;
+    width: 16px;
+    height: 16px;
     border-radius: 50%;
     display: inline-block;
     margin-left: 8px;
+    border: solid;
+    border-color: rgb(238, 238, 238);
   }
 
   .status-bar{

@@ -21,12 +21,8 @@ const imovelSchema = new mongoose.Schema({
         }],
 
     video: {
-        link: String,
-        status: {
-            type: String,
-            enum: ['pendente', 'em andamento', 'concluido'],
-            default: 'pendente'
-        }
+        path: String,
+        filename: String
     },
 
     criadoEm: {

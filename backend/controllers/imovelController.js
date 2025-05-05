@@ -24,23 +24,17 @@ export const criarImovel = async (req, res) => {
   }
 };
 
+// Função para atualizar o status do imóvel
+export const atualizarStatus = async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
 
-// Função para fazer upload de arquivos
-export const uploadArquivo = async (req, res) => {
-  const { id, tipo } = req.params;
+  console.log(`Atualizando status do imóvel ${id} para: ${status}`);  // Log do status recebido
 
-  if (!req.file) {
-    return res.status(400).json({ erro: 'Nenhum arquivo enviado.' });
+  // Verificar se o status enviado é válido
+  if (!['cadastrar', 'fazer video', 'fazer tour 360º', 'concluído'].includes(status)) {
+    return res.status(400).json({ erro: 'Status inválido enviado.' });
   }
-
-  // Tipos de arquivo permitidos
-  const allowedTypes = ['image/jpeg', 'image/png', 'video/mp4'];
-
-  if (!allowedTypes.includes(req.file.mimetype)) {
-    return res.status(400).json({ erro: 'Tipo de arquivo não permitido. Apenas imagens (JPG, PNG) e vídeos (MP4) são aceitos.' });
-  }
-
-  const caminho = `/uploads/imoveis/${id}/${tipo}/${req.file.filename}`;
 
   try {
     const imovel = await Imovel.findById(id);
@@ -48,22 +42,16 @@ export const uploadArquivo = async (req, res) => {
       return res.status(404).json({ erro: 'Imóvel não encontrado.' });
     }
 
-    if (tipo === 'imagens') {
-      imovel.imagens = [...(imovel.imagens || []), caminho];
-    } else if (tipo === 'videos') {
-      imovel.video = { ...imovel.video, link: caminho };
-    } else {
-      return res.status(400).json({ erro: 'Tipo de arquivo inválido. Use "imagens" ou "videos".' });
-    }
-
+    imovel.status = status;  // Atualiza o status conforme necessário
     await imovel.save();
 
-    res.status(200).json({ sucesso: true, caminho });
+    res.status(200).json({ sucesso: true, imovel });
   } catch (err) {
     console.error(err);  // Log detalhado de erro no servidor
-    res.status(500).json({ erro: 'Erro ao fazer upload do arquivo: ' + err.message });
+    res.status(500).json({ erro: 'Erro ao atualizar o status do imóvel: ' + err.message });
   }
 };
+
 // Função para listar os imóveis
 export const listarImoveis = async (req, res) => {
   try {
@@ -77,27 +65,6 @@ export const listarImoveis = async (req, res) => {
   } catch (err) {
     console.error(err);  // Log detalhado de erro no servidor
     res.status(500).json({ erro: 'Erro ao listar imóveis: ' + err.message });
-  }
-};
-
-// Função para atualizar o status do imóvel
-export const atualizarStatus = async (req, res) => {
-  const { id } = req.params;
-  const { status } = req.body;
-
-  try {
-    const imovel = await Imovel.findById(id);
-    if (!imovel) {
-      return res.status(404).json({ erro: 'Imóvel não encontrado.' });
-    }
-
-    imovel.status = status;  // Atualize o status conforme necessário
-    await imovel.save();
-
-    res.status(200).json({ sucesso: true, imovel });
-  } catch (err) {
-    console.error(err);  // Log detalhado de erro no servidor
-    res.status(500).json({ erro: 'Erro ao atualizar o status do imóvel: ' + err.message });
   }
 };
 
@@ -134,7 +101,6 @@ export const atualizarVideo = async (req, res) => {
   }
 };
 
-
 // Função para deletar um imóvel
 export const deletarImovel = async (req, res) => {
   const { id } = req.params;
@@ -160,5 +126,22 @@ export const deletarImovel = async (req, res) => {
     console.error(err);  // Log detalhado de erro no servidor
     res.status(500).json({ erro: 'Erro ao deletar imóvel: ' + err.message });
   }
+
+
 };
 
+
+export const atualizarImovel = async (req, res) => {
+  const { id } = req.params;
+  const dadosAtualizados = req.body;
+
+  try {
+    const imovel = await Imovel.findByIdAndUpdate(id, dadosAtualizados, { new: true });
+    if (!imovel) return res.status(404).json({ mensagem: 'Imóvel não encontrado' });
+
+    res.json(imovel);
+  } catch (err) {
+    console.error('Erro ao atualizar imóvel:', err);
+    res.status(500).json({ mensagem: 'Erro ao atualizar imóvel' });
+  }
+};
