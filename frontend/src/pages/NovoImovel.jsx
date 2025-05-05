@@ -1,4 +1,3 @@
-// src/pages/NovoImovel.jsx
 import { useState } from 'react';
 import axios from 'axios';
 import '../styles/NovoImovel.css'; // se quiser separar o estilo
@@ -8,6 +7,7 @@ export default function NovoImovel() {
   const [descricao, setDescricao] = useState('');
   const [status, setStatus] = useState('disponivel');
   const [arquivo, setArquivo] = useState(null);
+  const [video, setVideo] = useState(null); // Novo estado para o vídeo
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -27,7 +27,17 @@ export default function NovoImovel() {
         const formData = new FormData();
         formData.append('arquivo', arquivo);
 
-        await axios.post(`http://localhost:5000/api/upload/${imovelId}`, formData, {
+        await axios.post(`http://localhost:5000/api/upload/${imovelId}/imagens`, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' }
+        });
+      }
+
+      // 3. Envia vídeo, se houver
+      if (video) {
+        const formDataVideo = new FormData();
+        formDataVideo.append('arquivo', video);
+
+        await axios.post(`http://localhost:5000/api/upload/${imovelId}/videos`, formDataVideo, {
           headers: { 'Content-Type': 'multipart/form-data' }
         });
       }
@@ -38,6 +48,7 @@ export default function NovoImovel() {
       setDescricao('');
       setStatus('disponivel');
       setArquivo(null);
+      setVideo(null);
 
     } catch (err) {
       console.error(err);
@@ -69,6 +80,12 @@ export default function NovoImovel() {
         <input
           type="file"
           onChange={(e) => setArquivo(e.target.files[0])}
+        />
+        {/* Campo de vídeo */}
+        <input
+          type="file"
+          accept="video/mp4"
+          onChange={(e) => setVideo(e.target.files[0])}
         />
         <button type="submit">Cadastrar</button>
       </form>
