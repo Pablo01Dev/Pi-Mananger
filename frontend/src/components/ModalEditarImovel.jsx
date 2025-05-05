@@ -1,4 +1,3 @@
-// components/ModalEditarImovel.jsx
 import { useState } from 'react';
 import axios from 'axios';
 import '../styles/ModalEditarImovel.css';
@@ -14,27 +13,30 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar }) {
 
     const handleUpdate = async () => {
         try {
+            // Atualiza as informações principais do imóvel
             await axios.put(`http://localhost:5000/api/imoveis/${imovel._id}`, {
                 titulo,
                 descricao,
                 status,
             });
 
+            // Verifica e envia o arquivo de imagem, se houver
             if (arquivo) {
                 const formDataImg = new FormData();
-                formDataImg.append('file', arquivo);
+                formDataImg.append('arquivo', arquivo);
                 await axios.post(
-                    `http://localhost:5000/api/uploadArquivo/${imovel._id}/imagens`,
+                    `http://localhost:5000/api/upload/${imovel._id}/imagens`,
                     formDataImg,
                     { headers: { 'Content-Type': 'multipart/form-data' } }
                 );
             }
 
+            // Verifica e envia o arquivo de vídeo, se houver
             if (video) {
                 const formDataVid = new FormData();
-                formDataVid.append('file', video);
+                formDataVid.append('arquivo', video);
                 await axios.post(
-                    `http://localhost:5000/api/uploadArquivo/${imovel._id}/videos`,
+                    `http://localhost:5000/api/upload/${imovel._id}/videos`,
                     formDataVid,
                     { headers: { 'Content-Type': 'multipart/form-data' } }
                 );
@@ -42,12 +44,13 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar }) {
 
             alert('Atualização concluída!');
             onClose();
-            if (onAtualizar) onAtualizar();
+            if (onAtualizar) onAtualizar();  // Atualiza a lista de imóveis após sucesso
         } catch (err) {
             console.error('Erro ao atualizar imóvel:', err.response ? err.response.data : err.message);
             alert('Erro ao atualizar imóvel.');
         }
     };
+
 
     return (
         <div className="modal">

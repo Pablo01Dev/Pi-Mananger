@@ -17,7 +17,7 @@ export default function NovoImovel({ onClose, onSuccess }) {
         descricao,
         status,
       });
-      
+
       if (!titulo.trim()) {
         return alert('Preencha o título do imóvel!');
       }
@@ -30,7 +30,7 @@ export default function NovoImovel({ onClose, onSuccess }) {
         const formDataImg = new FormData();
         formDataImg.append('file', imagem);
         await axios.post(
-          `http://localhost:5000/api/uploadArquivo/${novoImovel._id}/imagens`,
+          `http://localhost:5000/api/upload/${novoImovel._id}/imagens`,
           formDataImg,
           { headers: { 'Content-Type': 'multipart/form-data' } }
         );
@@ -41,7 +41,7 @@ export default function NovoImovel({ onClose, onSuccess }) {
         const formDataVid = new FormData();
         formDataVid.append('file', video);
         await axios.post(
-          `http://localhost:5000/api/uploadArquivo/${novoImovel._id}/videos`,
+          `http://localhost:5000/api/upload/${novoImovel._id}/videos`,
           formDataVid,
           { headers: { 'Content-Type': 'multipart/form-data' } }
         );
