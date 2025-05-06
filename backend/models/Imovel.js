@@ -28,7 +28,13 @@ const imovelSchema = new mongoose.Schema({
     criadoEm: {
         type: Date,
         default: Date.now
+    },
+    
+    ordem: {
+        type: Number,
+        required: true,
     }
+
 });
 
 export default mongoose.model('Imovel', imovelSchema);

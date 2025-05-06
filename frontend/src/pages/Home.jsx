@@ -3,6 +3,7 @@ import axios from 'axios';
 import '../styles/Home.css';
 import CardImovel from '../components/CardImovel';
 import NovoImovel from '../components/NovoImovel';
+import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 
 export default function Home() {
   const [imoveis, setImoveis] = useState([]);
@@ -11,7 +12,10 @@ export default function Home() {
 
   const carregarImoveis = () => {
     axios.get('http://localhost:5000/api/imoveis')
-      .then(response => setImoveis(response.data))
+      .then(response => {
+        console.log('Imóveis carregados:', response.data);
+        setImoveis(response.data);
+      })
       .catch(error => console.error('Erro ao buscar imóveis:', error));
   };
 
@@ -22,6 +26,47 @@ export default function Home() {
   const imoveisFiltrados = imoveis.filter(imovel =>
     imovel.status.toLowerCase() === abaSelecionada.toLowerCase()
   );
+
+  console.log('Imóveis filtrados:', imoveisFiltrados);
+
+  const handleDragEnd = (result) => {
+    if (!result.destination) return;
+  
+    // Filtra os imóveis da aba atual
+    const filtrados = imoveis.filter(imovel =>
+      imovel.status.toLowerCase() === abaSelecionada.toLowerCase()
+    );
+  
+    const outros = imoveis.filter(imovel =>
+      imovel.status.toLowerCase() !== abaSelecionada.toLowerCase()
+    );
+  
+    // Reordena a lista da aba atual
+    const reordered = Array.from(filtrados);
+    const [moved] = reordered.splice(result.source.index, 1);
+    reordered.splice(result.destination.index, 0, moved);
+  
+    // Atualiza a propriedade 'ordem' para todos os imóveis da lista reordenada
+    reordered.forEach((imovel, index) => {
+      imovel.ordem = index; // A propriedade ordem é definida conforme a nova posição
+    });
+  
+    // Junta os imóveis reordenados com os que não foram afetados
+    const novaLista = [...outros, ...reordered];
+  
+    // Atualiza o estado no front-end
+    setImoveis(novaLista);
+  
+    // Envia a nova ordem para o back-end
+    axios.put('http://localhost:5000/api/imoveis/ordem', novaLista)
+      .then(response => {
+        console.log('Ordem atualizada com sucesso no back-end!');
+      })
+      .catch(error => {
+        console.error('Erro ao atualizar a ordem:', error);
+      });
+  };
+  
 
   return (
     <div className="home-container">
@@ -58,11 +103,28 @@ export default function Home() {
         </button>
       </div>
 
-      <div className="lista-cards">
-        {imoveisFiltrados.map(imovel => (
-          <CardImovel key={imovel._id} imovel={imovel} />
-        ))}
-      </div>
+      <DragDropContext onDragEnd={handleDragEnd}>
+        <Droppable isCombineEnabled={true} droppableId="droppable">
+          {(provided) => (
+            <div className="lista-cards" {...provided.droppableProps} ref={provided.innerRef}>
+              {imoveisFiltrados.map((imovel, index) => (
+                <Draggable key={imovel._id} draggableId={imovel._id} index={index}>
+                  {(provided) => (
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                    >
+                      <CardImovel imovel={imovel} />
+                    </div>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+      </DragDropContext>
 
       {mostrarModal && (
         <NovoImovel

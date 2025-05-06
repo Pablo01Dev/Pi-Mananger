@@ -5,8 +5,10 @@ import {
   deletarImovel,
   atualizarStatus,
   atualizarVideo,
-  atualizarImovel
+  atualizarImovel,
+  atualizarOrdem
 } from '../controllers/imovelController.js';
+
 
 const router = express.Router();
 
@@ -16,5 +18,7 @@ router.patch('/:id/status', atualizarStatus);
 router.patch('/:id/video', atualizarVideo);
 router.delete('/:id', deletarImovel);
 router.put('/:id', atualizarImovel);
+router.put('/ordem', atualizarOrdem);
+
 
 export default router;

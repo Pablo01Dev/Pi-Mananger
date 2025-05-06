@@ -6,36 +6,35 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar }) {
     const [titulo, setTitulo] = useState(imovel.titulo);
     const [descricao, setDescricao] = useState(imovel.descricao);
     const [status, setStatus] = useState(imovel.status);
-    const [arquivo, setArquivo] = useState(null);
-    const [video, setVideo] = useState(null);
+    const [arquivos, setArquivos] = useState([]);
+    const [videos, setVideos] = useState([]);
     const [showCarousel, setShowCarousel] = useState(false);
     const [imagens, setImagens] = useState(imovel.imagens || []);
 
     const handleUpdate = async () => {
         try {
-            // Atualiza as informações principais do imóvel
             await axios.put(`http://localhost:5000/api/imoveis/${imovel._id}`, {
                 titulo,
                 descricao,
                 status,
             });
 
-            // Verifica e envia o arquivo de imagem, se houver
-            if (arquivo) {
+            // Upload múltiplas imagens
+            for (const img of arquivos) {
                 const formDataImg = new FormData();
-                formDataImg.append('arquivo', arquivo);
+                formDataImg.append('arquivo', img);
                 const response = await axios.post(
                     `http://localhost:5000/api/upload/${imovel._id}/imagens`,
                     formDataImg,
                     { headers: { 'Content-Type': 'multipart/form-data' } }
                 );
-                setImagens(response.data.imagens); // Atualiza após upload
+                setImagens(prev => [...prev, ...response.data.imagens]);
             }
 
-            // Verifica e envia o arquivo de vídeo, se houver
-            if (video) {
+            // Upload múltiplos vídeos
+            for (const vid of videos) {
                 const formDataVid = new FormData();
-                formDataVid.append('arquivo', video);
+                formDataVid.append('arquivo', vid);
                 await axios.post(
                     `http://localhost:5000/api/upload/${imovel._id}/videos`,
                     formDataVid,
@@ -43,7 +42,7 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar }) {
                 );
             }
 
-            // ✅ Aqui está a parte que deve sempre rodar, independente de vídeo
+            // Exclusão de imagens
             for (const filename of imagensParaExcluir) {
                 try {
                     await axios.delete(`http://localhost:5000/api/upload/${imovel._id}/${filename}`);
@@ -54,7 +53,7 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar }) {
 
             alert('Atualização concluída!');
             onClose();
-            if (onAtualizar) onAtualizar();  // Atualiza a lista de imóveis após sucesso
+            if (onAtualizar) onAtualizar();
         } catch (err) {
             console.error('Erro ao atualizar imóvel:', err.response ? err.response.data : err.message);
             alert('Erro ao atualizar imóvel.');
@@ -110,8 +109,24 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar }) {
                     type="file"
                     id="inputImagem"
                     className="input-arquivo"
-                    onChange={e => setArquivo(e.target.files[0])}
+                    multiple
+                    accept="image/*"
+                    onChange={e => setArquivos(Array.from(e.target.files))}
                 />
+                
+                {arquivos.length > 0 && (
+                    <div className="preview-container">
+                        {arquivos.map((file, index) => (
+                            <img
+                                key={index}
+                                src={URL.createObjectURL(file)}
+                                alt={`preview-${index}`}
+                                className="imagem-preview"
+                            />
+                        ))}
+                    </div>
+                )}
+
 
                 <label htmlFor="inputImagem" className="botao-upload">
                     Adicionar imagem
@@ -125,10 +140,11 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar }) {
                 )}
                 <input
                     type="file"
-                    accept="video/mp4"
                     id="inputVideo"
                     style={{ display: 'none' }}
-                    onChange={e => setVideo(e.target.files[0])}
+                    multiple
+                    accept="video/mp4"
+                    onChange={e => setVideos(Array.from(e.target.files))}
                 />
 
                 <label htmlFor="inputVideo" className="botao-upload">

@@ -7,6 +7,7 @@ import marketingRoutes from './routes/marketing.routes.js';
 
 
 
+
 const router = express.Router();
 
 router.get('/', (req, res) => {
@@ -18,6 +19,8 @@ router.use('/upload', uploadRoutes);
 router.use('/requisicoes', requisicaoRoutes); 
 router.use('/imoveis', imovelRoutes);
 router.use('/marketing', marketingRoutes);
+
+
 
 
 export default router;

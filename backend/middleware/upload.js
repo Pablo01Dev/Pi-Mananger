@@ -6,7 +6,7 @@ const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     const { id, tipo } = req.params;
     const dir = path.resolve(`uploads/imoveis/${id}/${tipo}`);
-
+    
     // Criar diretório se não existir
     fs.promises.mkdir(dir, { recursive: true }).then(() => {
       cb(null, dir);
@@ -20,4 +20,15 @@ const storage = multer.diskStorage({
   }
 });
 
-export const upload = multer({ storage });
+// Verificação do tipo de arquivo
+export const upload = multer({
+  storage,
+  fileFilter: (req, file, cb) => {
+    const tiposPermitidos = ['image/jpeg', 'image/png', 'video/mp4']; // Exemplo para imagens e vídeos
+    if (!tiposPermitidos.includes(file.mimetype)) {
+      return cb(new Error('Tipo de arquivo não permitido.'), false);
+    }
+    cb(null, true);
+  }
+});
+
