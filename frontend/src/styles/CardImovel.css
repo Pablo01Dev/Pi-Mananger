@@ -1,114 +1,63 @@
 .card-imovel {
     border: 1px solid #ddd;
-    padding: 16px;
-    width: 300px;
+    padding: 26px;
+    width: 320px;
     background-color: white;
-    border-radius: 8px;
-    box-shadow: 0px 2px 6px rgba(0,0,0,0.1);
-  }
-  
-  .media {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
+    border-radius: 7px;
+    box-shadow: 8px 8px 18px rgba(0, 0, 0, 0.05);
+}
+
+.descript-card {
+    width: 100;
+    height: 6em;
+    background-color: #f1f1f18a;
+    border-radius: 7px;
+    padding: .5em;
+    color: #848484;
+    font-size: 18px;
+}
+
+.media {
     margin-top: 10px;
-  }
-  
-  .card-imovel button {
-    margin-top: 10px;
-  }
-  
-  /* Modal */
-  .modal {
-    position: fixed;
-    top: 0;
-    left: 0;
+    position: relative;
+    width: 100%;
+    height: 300px;
+    overflow: hidden;
+    border-radius: 7px;
+}
+
+.media-image {
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.6);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .modal-content {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    width: 400px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  
-  .modal-actions {
-    display: flex;
-    justify-content: space-between;
-  }
-  
-  .status-color {
+    object-fit: cover;
+    /* Faz com que a imagem ocupe toda a área da div sem distorção */
+    object-position: center;
+    /* Centraliza a imagem */
+}
+
+
+.card-imovel button {
+    margin-top: 10px;
+}
+
+.status-color {
     width: 16px;
     height: 16px;
     border-radius: 50%;
     display: inline-block;
     margin-left: 8px;
     border: solid;
-    border-color: rgb(238, 238, 238);
-  }
+    border-color: #eeeeee;
+}
 
-  .status-bar{
+.status-bar {
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-between
-  }
+}
 
-  .modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 999;
-  }
-  
-  .modal-content {
-    background: white;
-    padding: 24px;
-    border-radius: 10px;
-    width: 600px;
-    max-height: 90vh;
-    overflow-y: auto;
-    position: relative;
-  }
-  
-  .carousel-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.85);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-  }
-  
-  .carousel {
-    display: flex;
-    gap: 16px;
-    overflow-x: auto;
-    max-width: 90%;
-  }
-  
-  .carousel img {
-    border: 2px solid white;
-    border-radius: 8px;
-  }
-  
-  
+.status-bar p {
+    font-size: 16px;
+    color: #848484;
+}

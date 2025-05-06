@@ -21,7 +21,7 @@ export default function CardImovel({ imovel, onAtualizar }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     return (
-        <div className="card-imovel">
+        <div className="card-imovel" onClick={() => setIsModalOpen(true)}>
             <div className="status-bar">
                 <p>{imovel.status}</p>
                 <div
@@ -31,7 +31,7 @@ export default function CardImovel({ imovel, onAtualizar }) {
             </div>
 
             <h3>{imovel.titulo}</h3>
-            <p>{imovel.descricao}</p>
+            <p className='descript-card'>{imovel.descricao}</p>
 
             <div className="media">
                 {imovel.imagens?.map((img, idx) => (
@@ -39,18 +39,10 @@ export default function CardImovel({ imovel, onAtualizar }) {
                         key={idx}
                         src={`http://localhost:5000/${img.path.replace(/\\/g, '/')}`}
                         alt={img.filename}
-                        width="100"
+                        className="media-image"
                     />
                 ))}
-                {imovel.videos?.map((vid, idx) => (
-                    <video key={idx} width="150" controls>
-                        <source src={`http://localhost:5000/${vid.path.replace(/\\/g, '/')}`} type="video/mp4" />
-                        Seu navegador não suporta vídeo.
-                    </video>
-                ))}
             </div>
-
-            <button onClick={() => setIsModalOpen(true)}>Editar</button>
 
             {isModalOpen && (
                 <ModalEditarImovel

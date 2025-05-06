@@ -21,7 +21,7 @@ h1 {
 }
 
 
-h2, h3, p, li {
+h2, h3, p, li, label {
   font-size: 20px ;
   font-family: 'Roboto';
 }
