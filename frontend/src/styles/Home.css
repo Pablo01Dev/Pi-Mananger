@@ -1,23 +1,63 @@
-.lista-cards {
-    display: flex;
-    flex-direction: row;
-    gap: 2em;
-    background-color: #eaeaea;
-    padding: 3em;
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow-x: hidden;
 }
+
+
+.lista-cards {
+  display: flex;
+  flex-direction: row;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  gap: 2em;
+  background-color: #eaeaea;
+  padding: 3em;
+  margin: 0;
+
+  max-width: 100%;         /* impede que ultrapasse a tela */
+  box-sizing: border-box;  /* garante que padding conte no tamanho */
+  scroll-behavior: smooth;
+}
+
+
+.lista-cards::-webkit-scrollbar {
+  height: 6px;
+}
+
+.lista-cards::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 4px;
+}
+
+.home-container {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+
 
 .home-nav {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
     padding: 0px ;
+    margin: 0;
 }
 
 .home-nav ul{
     display: flex;
     flex-direction: row;
     gap: 2em;
+    
 }
+
+.lista-cards > div {
+  flex: 0 0 auto;
+  min-width: 250px; /* ou o tamanho que seu card ocupa */
+}
+
 
 .home-nav ul li {
     cursor: pointer;
