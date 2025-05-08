@@ -4,6 +4,7 @@ import '../styles/Home.css';
 import CardImovel from '../components/CardImovel';
 import NovoImovel from '../components/NovoImovel';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import ListaCards from '../components/ListaCards';
 
 export default function Home() {
   const [imoveis, setImoveis] = useState([]);
@@ -31,32 +32,32 @@ export default function Home() {
 
   const handleDragEnd = (result) => {
     if (!result.destination) return;
-  
+
     // Filtra os imóveis da aba atual
     const filtrados = imoveis.filter(imovel =>
       imovel.status.toLowerCase() === abaSelecionada.toLowerCase()
     );
-  
+
     const outros = imoveis.filter(imovel =>
       imovel.status.toLowerCase() !== abaSelecionada.toLowerCase()
     );
-  
+
     // Reordena a lista da aba atual
     const reordered = Array.from(filtrados);
     const [moved] = reordered.splice(result.source.index, 1);
     reordered.splice(result.destination.index, 0, moved);
-  
+
     // Atualiza a propriedade 'ordem' para todos os imóveis da lista reordenada
     reordered.forEach((imovel, index) => {
       imovel.ordem = index; // A propriedade ordem é definida conforme a nova posição
     });
-  
+
     // Junta os imóveis reordenados com os que não foram afetados
     const novaLista = [...outros, ...reordered];
-  
+
     // Atualiza o estado no front-end
     setImoveis(novaLista);
-  
+
     // Envia a nova ordem para o back-end
     axios.put('http://localhost:5000/api/imoveis/ordem', novaLista)
       .then(response => {
@@ -66,7 +67,7 @@ export default function Home() {
         console.error('Erro ao atualizar a ordem:', error);
       });
   };
-  
+
 
   return (
     <div className="home-container">
@@ -98,40 +99,19 @@ export default function Home() {
           </li>
         </ul>
 
-        <button type="button" onClick={() => setMostrarModal(true)}>
-          + Novo Imóvel
+        <button className='novo-button' type="button" onClick={() => setMostrarModal(true)}>
+          <h4 className='novo'>Novo Imóvel</h4> 
+          <p className='mais'>+</p>
         </button>
       </div>
-
-      <DragDropContext onDragEnd={handleDragEnd}>
-        <Droppable isCombineEnabled={true} droppableId="droppable">
-          {(provided) => (
-            <div className="lista-cards" {...provided.droppableProps} ref={provided.innerRef}>
-              {imoveisFiltrados.map((imovel, index) => (
-                <Draggable key={imovel._id} draggableId={imovel._id} index={index}>
-                  {(provided) => (
-                    <div
-                      ref={provided.innerRef}
-                      {...provided.draggableProps}
-                      {...provided.dragHandleProps}
-                    >
-                      <CardImovel imovel={imovel} />
-                    </div>
-                  )}
-                </Draggable>
-              ))}
-              {provided.placeholder}
-            </div>
-          )}
-        </Droppable>
-      </DragDropContext>
+      <ListaCards imoveisFiltrados={imoveisFiltrados} handleDragEnd={handleDragEnd} />
 
       {mostrarModal && (
         <NovoImovel
           onClose={() => setMostrarModal(false)}
           onSuccess={() => {
             setMostrarModal(false);
-            carregarImoveis(); // Atualiza lista após novo cadastro
+            carregarImoveis();
           }}
         />
       )}

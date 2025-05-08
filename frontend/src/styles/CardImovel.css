@@ -11,7 +11,7 @@
 .descript-card {
     position: relative; /* necessário para posicionar o ::after */
     width: 95%;
-    height: 110px;
+    height: 90px;
     font-size: 14px;
     background-color: #f1f1f18a;
     border-radius: 7px;

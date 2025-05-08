@@ -3,7 +3,7 @@ import '../styles/Header.css';
 export default function Header() {
   return (
     <header className="header">
-      <div>
+      <div className="logo">
         <h1>Pi Mananger</h1>
       </div>
       <nav>

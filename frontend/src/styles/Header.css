@@ -1,19 +1,31 @@
 .header {
   background: #eee;
-  padding: 1rem;
+  padding: .5rem 4em ;
   border-bottom: 1px solid #ccc;
   display: flex;
-  justify-content: space-around;
-  
+  justify-content: space-between; /* Espaço entre os filhos */
+  align-items: center; /* Alinha os itens verticalmente no centro */
 }
 
-.header div {
-  flex-direction: row;
-}
 
+.header nav {
+  display: flex;
+  /* justify-content: end; Não é necessário aqui, o space-between já cuida disso */
+}
 
 .header nav ul {
+  align-items: center;
   display: flex;
   flex-direction: row;
   gap: 2em;
+  margin: 0; /* Removi o margin: auto para o alinhamento correto */
+  padding: 0; /* É bom ter um padding zerado por padrão em listas */
+}
+
+.header nav ul li {
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  gap: 2em;
+  margin: 0; /* Removi o margin: auto para o alinhamento correto */
 }
