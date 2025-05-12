@@ -17,7 +17,7 @@ const getStatusColor = (status) => {
     }
 };
 
-export default function CardImovel({ imovel, onAtualizar }) {
+export default function CardImovel({ imovel, onAtualizar, onExcluir }) {
     const formatDate = (dateString) => {
         const date = new Date(dateString);
         const day = date.getDate().toString().padStart(2, '0');
@@ -60,6 +60,7 @@ export default function CardImovel({ imovel, onAtualizar }) {
                     imovel={imovel}
                     onClose={() => setIsModalOpen(false)}
                     onAtualizar={onAtualizar}
+                    onExcluir={onExcluir}  // Passando a função onExcluir para o modal
                 />
             )}
         </div>

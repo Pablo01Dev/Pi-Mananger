@@ -1,10 +1,9 @@
-
 import React from 'react';
 import CardImovel from './CardImovel';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import '../styles/ListaCards.css'; // Crie um arquivo CSS para este componente
 
-function ListaCards({ imoveisFiltrados, handleDragEnd }) {
+function ListaCards({ imoveisFiltrados, handleDragEnd, onExcluir, onAbrirModal }) {
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
       <Droppable
@@ -23,7 +22,11 @@ function ListaCards({ imoveisFiltrados, handleDragEnd }) {
                     {...provided.draggableProps}
                     {...provided.dragHandleProps}
                   >
-                    <CardImovel imovel={imovel} />
+                    <CardImovel
+                      imovel={imovel}
+                      onExcluir={onExcluir} // Passando a função de exclusão para o CardImovel
+                      onAbrirModal={onAbrirModal} // Passando a função para abrir o modal
+                    />
                   </div>
                 )}
               </Draggable>
@@ -32,7 +35,7 @@ function ListaCards({ imoveisFiltrados, handleDragEnd }) {
           </div>
         )}
       </Droppable>
-    </DragDropContext >
+    </DragDropContext>
   );
 }
 

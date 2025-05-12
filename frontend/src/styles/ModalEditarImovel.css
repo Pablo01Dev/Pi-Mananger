@@ -42,7 +42,9 @@
     border: 1px solid #ccc;
   }
   
-  
+  .modal-content textarea{
+    height: 10em;
+   }
   .modal-content button {
     margin-top: 1rem;
     margin-right: 0.5rem;
@@ -100,8 +102,8 @@
   .carrossel button {
     margin-top: 1rem;
     padding: 0.6rem 1.2rem;
-    background: #dc3545;
-    color: white;
+    background: #d3d3d3;
+    color: rgb(0, 0, 0);
     border: none;
     border-radius: 7px;
     cursor: pointer;
@@ -172,3 +174,18 @@
   border: 1px solid #ccc;
   border-radius: 4px;
 }
+
+button.delete-button {
+    background-color: rgb(255, 113, 113);
+    color: rgb(0, 0, 0);
+    padding: 10px;
+    margin-bottom: 10px;
+    border: none;
+    cursor: pointer;
+  
+  }
+  
+  button.delete-button:disabled {
+    background-color: grey;
+  }
+

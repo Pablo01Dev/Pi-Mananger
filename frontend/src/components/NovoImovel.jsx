@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
-export default function NovoImovel({ onClose, onSuccess }) {
+export default function NovoImovel({ onClose, onSuccess, onExcluir }) {
   const [titulo, setTitulo] = useState('');
   const [descricao, setDescricao] = useState('');
   const [status, setStatus] = useState('cadastrar');
   const [ordem, setOrdem] = useState(0); // Estado para a ordem
   const [imagem, setImagem] = useState(null);
   const [video, setVideo] = useState(null);
+  const [error, setError] = useState(''); // Para mensagens de erro
 
   // Função para buscar o último imóvel e pegar a ordem
   const getUltimoImovel = async () => {
@@ -28,9 +29,11 @@ export default function NovoImovel({ onClose, onSuccess }) {
   }, []);
 
   const handleSubmit = async () => {
+    setError(''); // Limpa os erros antes de tentar enviar
+
     try {
       if (!titulo.trim()) {
-        return alert('Preencha o título do imóvel!');
+        return setError('Preencha o título do imóvel!');
       }
 
       // Cadastra o imóvel
@@ -75,7 +78,7 @@ export default function NovoImovel({ onClose, onSuccess }) {
 
     } catch (err) {
       console.error(err);
-      alert('Erro ao cadastrar imóvel.');
+      setError('Erro ao cadastrar imóvel.');
     }
   };
 
@@ -83,6 +86,8 @@ export default function NovoImovel({ onClose, onSuccess }) {
     <div className="modal">
       <div className="modal-content">
         <h2>Novo Imóvel</h2>
+
+        {error && <div className="error-message">{error}</div>}
 
         <label>Título</label>
         <input value={titulo} onChange={(e) => setTitulo(e.target.value)} />
@@ -99,10 +104,18 @@ export default function NovoImovel({ onClose, onSuccess }) {
         </select>
 
         <label>Imagem</label>
-        <input type="file" accept="image/*" onChange={(e) => setImagem(e.target.files[0])} />
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) => setImagem(e.target.files[0])}
+        />
 
         <label>Vídeo</label>
-        <input type="file" accept="video/mp4" onChange={(e) => setVideo(e.target.files[0])} />
+        <input
+          type="file"
+          accept="video/mp4"
+          onChange={(e) => setVideo(e.target.files[0])}
+        />
 
         <button onClick={handleSubmit}>Cadastrar</button>
         <button onClick={onClose}>Cancelar</button>

@@ -53,7 +53,7 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcl
             }
 
             alert('Atualização concluída!');
-            
+
             // Fechar o modal após a atualização ser concluída
             setTimeout(() => {
                 onClose(); // Fecha o modal
@@ -76,24 +76,34 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcl
 
             if (response.status === 200) {
                 alert('Imóvel excluído com sucesso!');
-                onExcluir(imovel._id); // Atualiza a lista de imóveis após a exclusão
+                onExcluir(imovel._id); // Chama a função de exclusão do componente pai
 
-                // Adicionando atraso para garantir que o modal só seja fechado após a exclusão ser processada
+                // Fecha o modal após a exclusão
                 setTimeout(() => {
-                    onClose(); // Fecha o modal após a exclusão
-                }, 500); // 500ms de delay para dar tempo para a resposta ser processada
+                    onClose(); // Fecha o modal
+                }, 500); // 500ms de delay
             }
         } catch (err) {
-            // Exibe erro detalhado
             const errorMessage = err.response ? err.response.data.erro || err.response.data : err.message;
             console.error('Erro ao excluir imóvel:', errorMessage);
             alert(`Erro ao excluir imóvel: ${errorMessage}`);
         }
     };
 
+
     return (
         <div className="modal">
             <div className="modal-content">
+                <button
+                    className="delete-button"
+                    onClick={(e) => {
+                        e.stopPropagation(); // Evita que o evento de clique se propague
+                        console.log("Função onExcluir chamada");
+                        onExcluir(imovel._id);
+                    }}
+                >
+                    Excluir Imóvel
+                </button>
                 <button className="close-button" onClick={(e) => {
                     e.stopPropagation();
                     onClose(); // Fecha o modal
@@ -173,8 +183,6 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcl
 
                 <button className='save-button' onClick={handleUpdate}>Salvar alterações</button>
 
-                {/* Botão de exclusão do imóvel */}
-                <button className="delete-button" onClick={handleDeleteImovel}>Excluir Imóvel</button>
             </div>
 
             {showCarousel && (

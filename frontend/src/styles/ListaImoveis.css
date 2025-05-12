@@ -2,18 +2,6 @@
     font-family: Arial, sans-serif;
   }
   
-  button.delete-button {
-    background-color: red;
-    color: white;
-    padding: 10px;
-    margin-bottom: 10px;
-    border: none;
-    cursor: pointer;
-  }
-  
-  button.delete-button:disabled {
-    background-color: grey;
-  }
   
   ul {
     list-style-type: none;
