@@ -7,7 +7,12 @@ import '../styles/ListaCards.css'; // Crie um arquivo CSS para este componente
 function ListaCards({ imoveisFiltrados, handleDragEnd }) {
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
-      <Droppable isCombineEnabled={true} droppableId="droppable">
+      <Droppable
+        isCombineEnabled={true}
+        droppableId="droppable"
+        isDropDisabled={false}
+        ignoreContainerClipping={true}
+      >
         {(provided) => (
           <div className="lista-cards" {...provided.droppableProps} ref={provided.innerRef}>
             {imoveisFiltrados.map((imovel, index) => (
@@ -27,7 +32,7 @@ function ListaCards({ imoveisFiltrados, handleDragEnd }) {
           </div>
         )}
       </Droppable>
-    </DragDropContext>
+    </DragDropContext >
   );
 }
 

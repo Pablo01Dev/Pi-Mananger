@@ -33,7 +33,6 @@ export default function Home() {
   const handleDragEnd = (result) => {
     if (!result.destination) return;
 
-    // Filtra os imóveis da aba atual
     const filtrados = imoveis.filter(imovel =>
       imovel.status.toLowerCase() === abaSelecionada.toLowerCase()
     );
@@ -42,23 +41,18 @@ export default function Home() {
       imovel.status.toLowerCase() !== abaSelecionada.toLowerCase()
     );
 
-    // Reordena a lista da aba atual
     const reordered = Array.from(filtrados);
     const [moved] = reordered.splice(result.source.index, 1);
     reordered.splice(result.destination.index, 0, moved);
 
-    // Atualiza a propriedade 'ordem' para todos os imóveis da lista reordenada
     reordered.forEach((imovel, index) => {
-      imovel.ordem = index; // A propriedade ordem é definida conforme a nova posição
+      imovel.ordem = index;
     });
 
-    // Junta os imóveis reordenados com os que não foram afetados
     const novaLista = [...outros, ...reordered];
 
-    // Atualiza o estado no front-end
     setImoveis(novaLista);
 
-    // Envia a nova ordem para o back-end
     axios.put('http://localhost:5000/api/imoveis/ordem', novaLista)
       .then(response => {
         console.log('Ordem atualizada com sucesso no back-end!');
@@ -68,6 +62,21 @@ export default function Home() {
       });
   };
 
+  const handleExcluirImovel = async (imovelId) => {
+    try {
+      const response = await axios.delete(`http://localhost:5000/api/imoveis/${imovelId}`);
+
+      if (response.status === 200) {
+        alert('Imóvel excluído com sucesso!');
+        // Atualiza a lista de imóveis após a exclusão
+        setImoveis(imoveis.filter(imovel => imovel._id !== imovelId));
+        setMostrarModal(false); // Fecha o modal após a exclusão
+      }
+    } catch (err) {
+      console.error('Erro ao excluir imóvel:', err);
+      alert('Erro ao excluir imóvel.');
+    }
+  };
 
   return (
     <div className="home-container">
@@ -80,16 +89,16 @@ export default function Home() {
             Cadastrar
           </li>
           <li
-            className={abaSelecionada === 'fazer video' ? 'ativo' : ''}
-            onClick={() => setAbaSelecionada('fazer video')}
-          >
-            Vídeo
-          </li>
-          <li
             className={abaSelecionada === 'fazer tour 360º' ? 'ativo' : ''}
             onClick={() => setAbaSelecionada('fazer tour 360º')}
           >
             Tour 360º
+          </li>
+          <li
+            className={abaSelecionada === 'fazer video' ? 'ativo' : ''}
+            onClick={() => setAbaSelecionada('fazer video')}
+          >
+            Vídeo
           </li>
           <li
             className={abaSelecionada === 'concluído' ? 'ativo' : ''}
@@ -100,11 +109,11 @@ export default function Home() {
         </ul>
 
         <button className='novo-button' type="button" onClick={() => setMostrarModal(true)}>
-          <h4 className='novo'>Novo Imóvel</h4> 
+          <h4 className='novo'>Novo Imóvel</h4>
           <p className='mais'>+</p>
         </button>
       </div>
-      <ListaCards imoveisFiltrados={imoveisFiltrados} handleDragEnd={handleDragEnd} />
+      <ListaCards imoveisFiltrados={imoveisFiltrados} handleDragEnd={handleDragEnd} onExcluir={handleExcluirImovel} />
 
       {mostrarModal && (
         <NovoImovel
@@ -113,7 +122,9 @@ export default function Home() {
             setMostrarModal(false);
             carregarImoveis();
           }}
+          onExcluir={handleExcluirImovel}
         />
+
       )}
     </div>
   );

@@ -6,9 +6,9 @@ import {
   atualizarStatus,
   atualizarVideo,
   atualizarImovel,
-  atualizarOrdem
+  atualizarOrdem,
+  buscarUltimoImovel // Importando a função
 } from '../controllers/imovelController.js';
-
 
 const router = express.Router();
 
@@ -20,5 +20,7 @@ router.delete('/:id', deletarImovel);
 router.put('/:id', atualizarImovel);
 router.put('/ordem', atualizarOrdem);
 
+// Rota para buscar o último imóvel
+router.get('/ultimo', buscarUltimoImovel);
 
 export default router;

@@ -73,7 +73,7 @@ body {
 }
 
 .home-nav button:hover {
-  background-color: #ffa600;
+  background-color: #ebb000;
 }
 
 button.novo-button {
@@ -87,7 +87,7 @@ button.novo-button {
   box-sizing: border-box;
 }
 .mais {
-  background-color: #ff8400;
+  background-color: #df9c00;
   padding: .5em .7em;
   border-radius: 7px;
   margin: 0;

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import axios from 'axios';
 import '../styles/ModalEditarImovel.css';
 
-export default function ModalEditarImovel({ imovel, onClose, onAtualizar }) {
+export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcluir }) {
     const [titulo, setTitulo] = useState(imovel.titulo);
     const [descricao, setDescricao] = useState(imovel.descricao);
     const [status, setStatus] = useState(imovel.status);
@@ -10,6 +10,7 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar }) {
     const [videos, setVideos] = useState([]);
     const [showCarousel, setShowCarousel] = useState(false);
     const [imagens, setImagens] = useState(imovel.imagens || []);
+    const [imagensParaExcluir, setImagensParaExcluir] = useState([]);
 
     const handleUpdate = async () => {
         try {
@@ -52,30 +53,50 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar }) {
             }
 
             alert('Atualização concluída!');
-            onClose();
-            if (onAtualizar) onAtualizar();
+            
+            // Fechar o modal após a atualização ser concluída
+            setTimeout(() => {
+                onClose(); // Fecha o modal
+                if (onAtualizar) onAtualizar(); // Atualiza a lista de imóveis
+            }, 500); // Delay de 500ms para garantir que a atualização esteja completa
         } catch (err) {
             console.error('Erro ao atualizar imóvel:', err.response ? err.response.data : err.message);
             alert('Erro ao atualizar imóvel.');
         }
     };
 
-
     const handleDeleteImage = (filename) => {
         setImagensParaExcluir((prev) => [...prev, filename]);
         setImagens((prev) => prev.filter(img => img.filename !== filename));
     };
 
+    const handleDeleteImovel = async () => {
+        try {
+            const response = await axios.delete(`http://localhost:5000/api/imoveis/${imovel._id}`);
 
-    const [imagensParaExcluir, setImagensParaExcluir] = useState([]);
+            if (response.status === 200) {
+                alert('Imóvel excluído com sucesso!');
+                onExcluir(imovel._id); // Atualiza a lista de imóveis após a exclusão
 
+                // Adicionando atraso para garantir que o modal só seja fechado após a exclusão ser processada
+                setTimeout(() => {
+                    onClose(); // Fecha o modal após a exclusão
+                }, 500); // 500ms de delay para dar tempo para a resposta ser processada
+            }
+        } catch (err) {
+            // Exibe erro detalhado
+            const errorMessage = err.response ? err.response.data.erro || err.response.data : err.message;
+            console.error('Erro ao excluir imóvel:', errorMessage);
+            alert(`Erro ao excluir imóvel: ${errorMessage}`);
+        }
+    };
 
     return (
         <div className="modal">
             <div className="modal-content">
                 <button className="close-button" onClick={(e) => {
                     e.stopPropagation();
-                    onClose();
+                    onClose(); // Fecha o modal
                 }}>
                     Fechar
                 </button>
@@ -113,7 +134,7 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar }) {
                     accept="image/*"
                     onChange={e => setArquivos(Array.from(e.target.files))}
                 />
-                
+
                 {arquivos.length > 0 && (
                     <div className="preview-container">
                         {arquivos.map((file, index) => (
@@ -126,7 +147,6 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar }) {
                         ))}
                     </div>
                 )}
-
 
                 <label htmlFor="inputImagem" className="botao-upload">
                     Adicionar imagem
@@ -152,6 +172,9 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar }) {
                 </label>
 
                 <button className='save-button' onClick={handleUpdate}>Salvar alterações</button>
+
+                {/* Botão de exclusão do imóvel */}
+                <button className="delete-button" onClick={handleDeleteImovel}>Excluir Imóvel</button>
             </div>
 
             {showCarousel && (

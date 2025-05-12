@@ -1,7 +1,6 @@
 import fs from 'fs-extra';
 import path from 'path';
 import Imovel from '../models/Imovel.js';
-
 const ROOT_UPLOAD_DIR = path.resolve('uploads/imoveis');
 
 // Função para criar imóvel
@@ -117,8 +116,7 @@ export const deletarImovel = async (req, res) => {
   const { id } = req.params;
 
   try {
-    // Encontre o imóvel no banco de dados e deleta
-    const imovel = await Imovel.findByIdAndDelete(id);  // Usando findByIdAndDelete
+    const imovel = await Imovel.findByIdAndDelete(id);
 
     if (!imovel) {
       return res.status(404).json({ erro: 'Imóvel não encontrado.' });
@@ -134,12 +132,11 @@ export const deletarImovel = async (req, res) => {
 
     res.status(200).json({ sucesso: 'Imóvel deletado com sucesso!' });
   } catch (err) {
-    console.error(err);  // Log detalhado de erro no servidor
     res.status(500).json({ erro: 'Erro ao deletar imóvel: ' + err.message });
   }
-
-
 };
+
+
 
 
 export const atualizarImovel = async (req, res) => {
@@ -175,3 +172,16 @@ export const atualizarOrdem = async (req, res) => {
   }
 };
 
+export const buscarUltimoImovel = async (req, res) => {
+  try {
+    // Encontra o imóvel com o maior valor de 'ordem'
+    const ultimoImovel = await Imovel.findOne().sort({ ordem: -1 }); // Ordena de forma decrescente
+    if (!ultimoImovel) {
+      return res.status(404).json({ message: 'Nenhum imóvel encontrado' });
+    }
+    res.json(ultimoImovel);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Erro ao buscar o último imóvel' });
+  }
+};

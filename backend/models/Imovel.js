@@ -10,7 +10,7 @@ const imovelSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['cadastrar', 'fazer video', 'fazer tour 360º', 'concluído'],
+        enum: ['cadastrar', 'fazer tour 360º', 'fazer video', 'concluído'],
         default: 'cadastrar'
     },
 
@@ -29,11 +29,12 @@ const imovelSchema = new mongoose.Schema({
         type: Date,
         default: Date.now
     },
-    
+
     ordem: {
         type: Number,
-        required: true,
-    }
+        default: 0
+
+}
 
 });
 

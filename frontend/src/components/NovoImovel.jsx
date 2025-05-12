@@ -1,54 +1,78 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import axios from 'axios';
-import '../styles/NovoImovel.css';
 
 export default function NovoImovel({ onClose, onSuccess }) {
   const [titulo, setTitulo] = useState('');
   const [descricao, setDescricao] = useState('');
   const [status, setStatus] = useState('cadastrar');
+  const [ordem, setOrdem] = useState(0); // Estado para a ordem
   const [imagem, setImagem] = useState(null);
   const [video, setVideo] = useState(null);
 
+  // Função para buscar o último imóvel e pegar a ordem
+  const getUltimoImovel = async () => {
+    try {
+      const res = await axios.get('http://localhost:5000/api/imoveis/ultimo');
+      if (res.data && res.data.ordem !== undefined) {
+        setOrdem(res.data.ordem + 1); // Define a ordem como o próximo número
+      }
+    } catch (err) {
+      console.error('Erro ao buscar o último imóvel', err);
+      setOrdem(0); // Se não encontrar nenhum imóvel, começa do zero
+    }
+  };
+
+  // Chama a função para buscar o último imóvel assim que o componente for montado
+  useEffect(() => {
+    getUltimoImovel();
+  }, []);
+
   const handleSubmit = async () => {
     try {
-      // 1. Cadastra imóvel
-      const res = await axios.post('http://localhost:5000/api/imoveis', {
-        titulo,
-        descricao,
-        status,
-      });
-
       if (!titulo.trim()) {
         return alert('Preencha o título do imóvel!');
       }
 
+      // Cadastra o imóvel
+      const res = await axios.post('http://localhost:5000/api/imoveis', {
+        titulo,
+        descricao,
+        status,
+        ordem, // Passando a ordem
+      });
+      console.log(res.data); // Verifique o que está sendo retornado da API
 
       const novoImovel = res.data;
 
-      // 2. Envia imagem se houver
+      // Envia imagem se houver
       if (imagem) {
         const formDataImg = new FormData();
         formDataImg.append('file', imagem);
         await axios.post(
           `http://localhost:5000/api/upload/${novoImovel._id}/imagens`,
           formDataImg,
-          { headers: { 'Content-Type': 'multipart/form-data' } }
+          {
+            headers: { 'Content-Type': 'multipart/form-data' },
+          }
         );
       }
 
-      // 3. Envia vídeo se houver
+      // Envia vídeo se houver
       if (video) {
         const formDataVid = new FormData();
         formDataVid.append('file', video);
         await axios.post(
           `http://localhost:5000/api/upload/${novoImovel._id}/videos`,
           formDataVid,
-          { headers: { 'Content-Type': 'multipart/form-data' } }
+          {
+            headers: { 'Content-Type': 'multipart/form-data' },
+          }
         );
       }
 
       alert('Imóvel cadastrado com sucesso!');
-      onSuccess(); // fecha e atualiza
+      onSuccess(); // Atualiza a lista de imóveis ou fecha modal
+
     } catch (err) {
       console.error(err);
       alert('Erro ao cadastrar imóvel.');
@@ -69,11 +93,10 @@ export default function NovoImovel({ onClose, onSuccess }) {
         <label>Status</label>
         <select value={status} onChange={(e) => setStatus(e.target.value)}>
           <option value="cadastrar">Cadastrar</option>
-          <option value="fazer video">Fazer vídeo</option>
           <option value="fazer tour 360º">Fazer tour 360º</option>
+          <option value="fazer video">Fazer vídeo</option>
           <option value="concluído">Concluído</option>
         </select>
-
 
         <label>Imagem</label>
         <input type="file" accept="image/*" onChange={(e) => setImagem(e.target.files[0])} />
