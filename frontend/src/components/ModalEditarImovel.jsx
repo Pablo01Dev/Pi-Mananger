@@ -94,94 +94,100 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcl
     return (
         <div className="modal">
             <div className="modal-content">
-                <button
-                    className="delete-button"
-                    onClick={(e) => {
-                        e.stopPropagation(); // Evita que o evento de clique se propague
-                        console.log("Função onExcluir chamada");
-                        onExcluir(imovel._id);
-                    }}
-                >
-                    Excluir Imóvel
-                </button>
-                <button className="close-button" onClick={(e) => {
-                    e.stopPropagation();
-                    onClose(); // Fecha o modal
-                }}>
-                    Fechar
-                </button>
-                <h2>Editar Imóvel</h2>
+                <div className='top-buttons'>
+                    <button
+                        className="delete-button"
+                        onClick={(e) => {
+                            e.stopPropagation(); // Evita que o evento de clique se propague
+                            console.log("Função onExcluir chamada");
+                            onExcluir(imovel._id);
+                        }}
+                    >
+                        Excluir Imóvel
+                    </button>
+                    <button className="close-button" onClick={(e) => {
+                        e.stopPropagation();
+                        onClose(); // Fecha o modal
+                    }}>
+                        X
+                    </button>
+                </div>
+                <div className='body'>
+                    <h2>Editar Imóvel</h2>
 
-                <label>Título</label>
-                <input type="text" value={titulo} onChange={e => setTitulo(e.target.value)} />
+                    <label>Título</label>
+                    <input type="text" value={titulo} onChange={e => setTitulo(e.target.value)} />
 
-                <label>Descrição</label>
-                <textarea value={descricao} onChange={e => setDescricao(e.target.value)} />
+                    <label>Descrição</label>
+                    <textarea value={descricao} onChange={e => setDescricao(e.target.value)} />
 
-                <label>Status</label>
-                <select value={status} onChange={(e) => setStatus(e.target.value)}>
-                    <option value="cadastrar">Cadastrar</option>
-                    <option value="fazer video">Fazer Vídeo</option>
-                    <option value="fazer tour 360º">Fazer Tour 360º</option>
-                    <option value="concluído">Concluído</option>
-                </select>
+                    <label>Status</label>
+                    <select value={status} onChange={(e) => setStatus(e.target.value)}>
+                        <option value="cadastrar">Cadastrar</option>
+                        <option value="fazer video">Fazer Vídeo</option>
+                        <option value="fazer tour 360º">Fazer Tour 360º</option>
+                        <option value="concluído">Concluído</option>
+                    </select>
 
-                <label>Imagens</label>
-                {imagens?.length > 0 && (
-                    <img
-                        src={`http://localhost:5000/${imagens[0].path.replace(/\\/g, '/')}`}
-                        alt="Imagem principal"
-                        className="imagem-preview"
-                        onClick={() => setShowCarousel(true)}
+                </div>
+                <div className='arquivos-upload'>
+                    <label>Imagens</label>
+                    {imagens?.length > 0 && (
+                        <img
+                            src={`http://localhost:5000/${imagens[0].path.replace(/\\/g, '/')}`}
+                            alt="Imagem principal"
+                            className="imagem-preview"
+                            onClick={() => setShowCarousel(true)}
+                        />
+                    )}
+
+                    <input
+                        type="file"
+                        id="inputImagem"
+                        className="input-arquivo"
+                        multiple
+                        accept="image/*"
+                        onChange={e => setArquivos(Array.from(e.target.files))}
                     />
-                )}
 
-                <input
-                    type="file"
-                    id="inputImagem"
-                    className="input-arquivo"
-                    multiple
-                    accept="image/*"
-                    onChange={e => setArquivos(Array.from(e.target.files))}
-                />
+                    {arquivos.length > 0 && (
+                        <div className="preview-container">
+                            {arquivos.map((file, index) => (
+                                <img
+                                    key={index}
+                                    src={URL.createObjectURL(file)}
+                                    alt={`preview-${index}`}
+                                    className="imagem-preview"
+                                />
+                            ))}
+                        </div>
+                    )}
 
-                {arquivos.length > 0 && (
-                    <div className="preview-container">
-                        {arquivos.map((file, index) => (
-                            <img
-                                key={index}
-                                src={URL.createObjectURL(file)}
-                                alt={`preview-${index}`}
-                                className="imagem-preview"
-                            />
-                        ))}
-                    </div>
-                )}
+                    <label htmlFor="inputImagem" className="botao-upload">
+                        Adicionar imagem
+                    </label>
 
-                <label htmlFor="inputImagem" className="botao-upload">
-                    Adicionar imagem
-                </label>
+                    <label>Vídeos</label>
+                    {imovel.video?.link && (
+                        <video controls width="250">
+                            <source src={imovel.video.link} type="video/mp4" />
+                        </video>
+                    )}
+                    <input
+                        type="file"
+                        id="inputVideo"
+                        style={{ display: 'none' }}
+                        multiple
+                        accept="video/mp4"
+                        onChange={e => setVideos(Array.from(e.target.files))}
+                    />
 
-                <label>Vídeos</label>
-                {imovel.video?.link && (
-                    <video controls width="250">
-                        <source src={imovel.video.link} type="video/mp4" />
-                    </video>
-                )}
-                <input
-                    type="file"
-                    id="inputVideo"
-                    style={{ display: 'none' }}
-                    multiple
-                    accept="video/mp4"
-                    onChange={e => setVideos(Array.from(e.target.files))}
-                />
+                    <label htmlFor="inputVideo" className="botao-upload">
+                        Adicionar vídeo
+                    </label>
 
-                <label htmlFor="inputVideo" className="botao-upload">
-                    Adicionar vídeo
-                </label>
-
-                <button className='save-button' onClick={handleUpdate}>Salvar alterações</button>
+                    <button className='save-button' onClick={handleUpdate}>Salvar alterações</button>
+                </div>
 
             </div>
 

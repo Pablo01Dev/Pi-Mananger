@@ -1,143 +1,144 @@
-
 .modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 999;
-  }
-  
-  .modal-content {
-    background: #fff;
-    padding: 2rem;
-    border-radius: 7px;
-    max-width: 600px;
-    width: 100%;
-    max-height: 90vh;
-    overflow-y: auto;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-  }
-  
-  .modal-content h2 {
-    margin-bottom: 1rem;
-  }
-  
-  .modal-content label {
-    display: block;
-    margin: 1rem 0 0.5rem;
-    font-weight: bold;
-  }
-  
-  .modal-content input[type="text"],
-  .modal-content textarea,
-  .modal-content select {
-    width: 100%;
-    padding: 0.5rem;
-    border-radius: 7px;
-    border: 1px solid #ccc;
-  }
-  
-  .modal-content textarea{
-    height: 10em;
-   }
-  .modal-content button {
-    margin-top: 1rem;
-    margin-right: 0.5rem;
-    padding: 0.6rem 1rem;
-    border: none;
-    border-radius: 7px;
-    background-color: #ffbf00;
-    color: rgb(0, 0, 0);
-    cursor: pointer;
-  }
-  
-  .modal-content button:last-child {
-    background-color: #ffbf00;
-  }
-  
-  .imagem-preview {
-    width: 100%;
-    max-height: 200px;
-    object-fit: cover;
-    cursor: pointer;
-    margin-bottom: 0.5rem;
-    border-radius: 7px;
-  }
-  
-  /* Carrossel */
-  .carrossel-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(20, 20, 20, 0.9);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-  }
-  
-  .carrossel {
-    background: white;
-    padding: 2rem;
-    border-radius: 7px;
-    max-width: 90%;
-    max-height: 90%;
-    overflow-y: auto;
-    text-align: center;
-  }
-  
-  .carrossel img {
-    max-width: 100%;
-    height: auto;
-    margin: 0.5rem 0;
-  }
-  
-  .carrossel button {
-    margin-top: 1rem;
-    padding: 0.6rem 1.2rem;
-    background: #d3d3d3;
-    color: rgb(0, 0, 0);
-    border: none;
-    border-radius: 7px;
-    cursor: pointer;
-  }
-  
-  .close-button {
-    position: relative;
-    left: 32em; 
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
 }
 
-.close-button {
-    position: relative;
-    left: 32em; 
+.modal-content {
+  background: var(--cinza-claro);
+  padding: 2rem;
+  border-radius: 7px;
+  max-width: 700px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
-.save-button {
-    position: relative;
-    left: 27em; 
+input:hover,
+textarea:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
+}
+
+.modal-content h2 {
+  margin-bottom: 1rem;
+}
+
+.modal-content label {
+  display: block;
+  margin: 1rem 0 0.5rem;
+  font-weight: bold;
+}
+
+.modal-content input[type="text"],
+.modal-content textarea,
+.modal-content select {
+  width: 100%;
+  padding: 0.5rem;
+  border-radius: 7px;
+  border: 1px solid #ccc;
+  outline: none;
+  /* também remove o contorno azul padrão */
+}
+
+.modal-content textarea {
+  height: 10em;
+}
+
+
+.modal-content button {
+  margin-top: 1rem;
+  margin-right: 0.5rem;
+  padding: 0.6rem 1rem;
+  border: none;
+  border-radius: 7px;
+  background-color: #ffbf00;
+  color: var (--preto);
+  cursor: pointer;
+}
+
+.modal-content button:last-child {
+  background-color: #ffbf00;
+}
+
+.imagem-preview {
+  width: 100%;
+  max-height: 200px;
+  object-fit: cover;
+  cursor: pointer;
+  margin-bottom: 0.5rem;
+  border-radius: 7px;
+}
+
+/* Carrossel */
+.carrossel-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(20, 20, 20, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
 }
 
 .carrossel {
-    display: flex;
-    flex-direction: column;
-    justify-content: start;
-    width: 30em;
+  background: white;
+  padding: 2rem;
+  border-radius: 7px;
+  max-width: 90%;
+  max-height: 90%;
+  overflow-y: auto;
+  text-align: center;
 }
+
 .carrossel img {
-    max-width: 30em;
+  max-width: 100%;
+  height: auto;
+  margin: 0.5rem 0;
+}
+
+.carrossel button {
+  margin-top: 1rem;
+  padding: 0.6rem 1.2rem;
+  background: #d3d3d3;
+  color: rgb(0, 0, 0);
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+}
+
+
+
+.save-button {
+  float: right;
+}
+
+.carrossel {
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  width: 30em;
+}
+
+.carrossel img {
+  max-width: 30em;
 }
 
 .carousel-close-button {
-    width: 6em;
-    position: relative;
-    left: 30em; 
+  width: 6em;
+  position: relative;
+  left: 30em;
 }
 
 #inputImagem {
@@ -147,16 +148,21 @@
 
 .botao-upload {
   display: inline-block;
-  background-color: #cfcfcf;
-  color: rgb(90, 90, 90);
-  padding: 3px 8px;           /* Botão menor */
-  border-radius: 5px;         /* Borda mais suave */
+  background-color: var(--cinza-medio);
+  color: var(--cinza-escuro);
+  padding: 3px 8px;
+  /* Botão menor */
+  border-radius: 5px;
+  /* Borda mais suave */
   cursor: pointer;
   font-weight: bold;
   margin-top: 5px;
-  font-size: 0.85rem;         /* Fonte menor */
-  margin-left: 0;             /* Alinhado à esquerda */
-  text-align: center;         /* Texto centralizado dentro do botão */
+  font-size: 0.85rem;
+  /* Fonte menor */
+  margin-left: 0;
+  /* Alinhado à esquerda */
+  text-align: center;
+  /* Texto centralizado dentro do botão */
 }
 
 
@@ -176,16 +182,27 @@
 }
 
 button.delete-button {
-    background-color: rgb(255, 113, 113);
-    color: rgb(0, 0, 0);
-    padding: 10px;
-    margin-bottom: 10px;
-    border: none;
-    cursor: pointer;
-  
-  }
-  
-  button.delete-button:disabled {
-    background-color: grey;
-  }
+  background-color: rgb(255, 113, 113);
+  color: rgb(0, 0, 0);
+  padding: 10px;
+  border: none;
+  cursor: pointer;
 
+}
+
+button.delete-button:disabled {
+  background-color: grey;
+}
+
+.top-buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+}
+
+.top-buttons .close-button{
+  float: right;
+  margin: 0;
+  height: 3em;
+}

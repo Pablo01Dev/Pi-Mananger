@@ -1,15 +1,20 @@
 .card-imovel {
-    border: 1px solid #ddd;
+    border: 2px solid #e3e3e3;
     padding: 26px;
     width: 300px;
     height: 500px;
     background-color: white;
     border-radius: 7px;
-    box-shadow: 8px 8px 18px rgba(0, 0, 0, 0.05);
+    box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.03);
+}
+
+.card-imovel:hover {
+    box-shadow: 6px 6px 8px rgba(0, 0, 0, 0.08);
 }
 
 .descript-card {
-    position: relative; /* necessário para posicionar o ::after */
+    position: relative;
+    /* necessário para posicionar o ::after */
     width: 95%;
     height: 160px;
     font-size: 14px;
@@ -19,7 +24,7 @@
     color: #848484;
     line-height: 1.4;
     display: -webkit-box;
-   /* -webkit-line-clamp: 4; */
+    /* -webkit-line-clamp: 4; */
     -webkit-box-orient: vertical;
     overflow: hidden;
     white-space: normal;
@@ -35,9 +40,10 @@
     left: 0;
     width: 100%;
     height: 1.4em;
-   
+
     background: linear-gradient(to top, rgba(241, 241, 241, 1), transparent);
-    pointer-events: none; /* deixa clicável o conteúdo abaixo */
+    pointer-events: none;
+    /* deixa clicável o conteúdo abaixo */
     border-radius: 0 0 7px 7px;
 }
 

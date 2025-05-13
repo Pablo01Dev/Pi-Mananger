@@ -185,3 +185,4 @@ export const buscarUltimoImovel = async (req, res) => {
     res.status(500).json({ message: 'Erro ao buscar o último imóvel' });
   }
 };
+
