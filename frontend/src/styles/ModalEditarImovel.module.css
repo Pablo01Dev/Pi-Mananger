@@ -53,19 +53,11 @@ textarea:hover {
 }
 
 .modalContent button {
-  margin-top: 1rem;
-  margin-right: 0.5rem;
-  padding: 0.6rem 1rem;
-  border: none;
   border-radius: 7px;
-  background-color: #ffbf00;
-  color: var (--preto);
+  color: var(--preto);
   cursor: pointer;
 }
 
-.modalContent button:last-child {
-  background-color: #ffbf00;
-}
 
 .imagemPreview {
   width: 100%;
@@ -106,25 +98,19 @@ textarea:hover {
   margin: 0.5rem 0;
 }
 
-.carrossel button {
-  margin-top: 1rem;
-  padding: 0.6rem 1.2rem;
-  background: #d3d3d3;
-  color: rgb(0, 0, 0);
-  border: none;
-  border-radius: 7px;
-  cursor: pointer;
-}
 
 .saveButton {
   float: right;
+  border: none;
+  background-color: var(--cinza-medio);
+  padding: 1em;
 }
 
 .carrossel {
   display: flex;
   flex-direction: column;
-  justify-content: start;
-  width: 30em;
+  justify-content: space-around;
+  max-width: 30em;
 }
 
 .carrossel img {
@@ -132,9 +118,12 @@ textarea:hover {
 }
 
 .carouselCloseButton {
-  width: 6em;
-  position: relative;
-  left: 30em;
+  padding: 2em;
+  border: none;
+  border-radius: 7px;
+  float: right;
+  cursor: pointer;
+
 }
 
 #inputImagem {
@@ -146,18 +135,17 @@ textarea:hover {
   background-color: var(--cinza-medio);
   color: var(--cinza-escuro);
   padding: 3px 8px;
-  /* Botão menor */
+
   border-radius: 5px;
-  /* Borda mais suave */
   cursor: pointer;
   font-weight: bold;
   margin-top: 5px;
   font-size: 0.85rem;
-  /* Fonte menor */
+
   margin-left: 0;
-  /* Alinhado à esquerda */
+
   text-align: center;
-  /* Texto centralizado dentro do botão */
+
 }
 
 .previewContainer {
@@ -175,15 +163,15 @@ textarea:hover {
   border-radius: 4px;
 }
 
-button.deleteButton {
+.deleteButton {
   background-color: rgb(255, 113, 113);
-  color: rgb(0, 0, 0);
+  color: var(--preto);
   padding: 10px;
   border: none;
   cursor: pointer;
 }
 
-button.deleteButton:disabled {
+.deleteButton:disabled {
   background-color: grey;
 }
 
@@ -191,12 +179,14 @@ button.deleteButton:disabled {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  border: none;
 }
 
 .topButtons .closeButton {
   float: right;
   margin: 0;
   height: 3em;
+  border: none;
 }
 
 .previewContainer {
@@ -239,10 +229,12 @@ button.deleteButton:disabled {
 }
 
 .iconeLixeira {
-  background-color: transparent !important;
+  background-color: red;
+  padding: .2em;
   border: none;
-  color: white;
+  opacity: 0.5;
   font-size: 24px;
+  color: rgb(255, 255, 255);
   cursor: pointer;
   z-index: 2;
 }

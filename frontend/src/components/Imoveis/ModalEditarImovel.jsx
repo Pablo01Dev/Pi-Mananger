@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import axios from 'axios';
 import styles from '../../styles/ModalEditarImovel.module.css';
+import { FiTrash } from 'react-icons/fi';
+
 
 export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcluir }) {
     const [titulo, setTitulo] = useState(imovel.titulo);
@@ -143,6 +145,7 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcl
                     <input
                         type="file"
                         id="inputImagem"
+                        style={{ display: 'none' }}
                         className={styles.inputArquivo}
                         multiple
                         accept="image/*"
@@ -165,7 +168,7 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcl
                                                 setArquivos(prev => prev.filter((_, i) => i !== index));
                                             }}
                                         >
-                                            🗑️
+                                            <FiTrash />
                                         </button>
                                     </div>
                                 </div>
@@ -204,8 +207,8 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcl
             </div>
 
             {showCarousel && (
-                <div className="carrossel-overlay">
-                    <div className="carrossel">
+                <div className={styles.carrosselOverlay}>
+                    <div className={styles.carrossel}>
                         {imagens.map((img, idx) => (
                             <div key={idx} className={styles.carroselItem}>
                                 <img src={`http://localhost:5000/${img.path.replace(/\\/g, '/')}`} alt={`Imagem ${idx}`} />
