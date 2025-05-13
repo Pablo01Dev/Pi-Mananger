@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
-import '../styles/ModalEditarImovel.css';
+import styles from '../../styles/ModalEditarImovel.module.css';
 
 export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcluir }) {
     const [titulo, setTitulo] = useState(imovel.titulo);
@@ -54,11 +54,10 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcl
 
             alert('Atualização concluída!');
 
-            // Fechar o modal após a atualização ser concluída
             setTimeout(() => {
-                onClose(); // Fecha o modal
-                if (onAtualizar) onAtualizar(); // Atualiza a lista de imóveis
-            }, 500); // Delay de 500ms para garantir que a atualização esteja completa
+                onClose();
+                if (onAtualizar) onAtualizar();
+            }, 500);
         } catch (err) {
             console.error('Erro ao atualizar imóvel:', err.response ? err.response.data : err.message);
             alert('Erro ao atualizar imóvel.');
@@ -76,12 +75,12 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcl
 
             if (response.status === 200) {
                 alert('Imóvel excluído com sucesso!');
-                onExcluir(imovel._id); // Chama a função de exclusão do componente pai
+                onExcluir(imovel._id);
 
-                // Fecha o modal após a exclusão
+
                 setTimeout(() => {
-                    onClose(); // Fecha o modal
-                }, 500); // 500ms de delay
+                    onClose();
+                }, 500);
             }
         } catch (err) {
             const errorMessage = err.response ? err.response.data.erro || err.response.data : err.message;
@@ -92,27 +91,27 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcl
 
 
     return (
-        <div className="modal">
-            <div className="modal-content">
-                <div className='top-buttons'>
+        <div className={styles.modal}>
+            <div className={styles.modalContent}>
+                <div className={styles.topButtons}>
                     <button
-                        className="delete-button"
+                        className={styles.deleteButton}
                         onClick={(e) => {
-                            e.stopPropagation(); // Evita que o evento de clique se propague
+                            e.stopPropagation();
                             console.log("Função onExcluir chamada");
                             onExcluir(imovel._id);
                         }}
                     >
                         Excluir Imóvel
                     </button>
-                    <button className="close-button" onClick={(e) => {
+                    <button className={styles.closeButton} onClick={(e) => {
                         e.stopPropagation();
-                        onClose(); // Fecha o modal
+                        onClose();
                     }}>
                         X
                     </button>
                 </div>
-                <div className='body'>
+                <div className={styles.body}>
                     <h2>Editar Imóvel</h2>
 
                     <label>Título</label>
@@ -130,13 +129,13 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcl
                     </select>
 
                 </div>
-                <div className='arquivos-upload'>
+                <div className={styles.arquivoUpload}>
                     <label>Imagens</label>
                     {imagens?.length > 0 && (
                         <img
                             src={`http://localhost:5000/${imagens[0].path.replace(/\\/g, '/')}`}
                             alt="Imagem principal"
-                            className="imagem-preview"
+                            className={styles.imagemPreview}
                             onClick={() => setShowCarousel(true)}
                         />
                     )}
@@ -144,26 +143,39 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcl
                     <input
                         type="file"
                         id="inputImagem"
-                        className="input-arquivo"
+                        className={styles.inputArquivo}
                         multiple
                         accept="image/*"
                         onChange={e => setArquivos(Array.from(e.target.files))}
                     />
 
                     {arquivos.length > 0 && (
-                        <div className="preview-container">
+                        <div className={styles.previewContainer}>
                             {arquivos.map((file, index) => (
-                                <img
-                                    key={index}
-                                    src={URL.createObjectURL(file)}
-                                    alt={`preview-${index}`}
-                                    className="imagem-preview"
-                                />
+                                <div key={index} className={styles.imagemPreviewWrapper}>
+                                    <img
+                                        src={URL.createObjectURL(file)}
+                                        alt={`preview-${index}`}
+                                        className={styles.imagemPreview}
+                                    />
+                                    <div className={styles.imagemOverlay}>
+                                        <button
+                                            className={styles.iconeLixeira}
+                                            onClick={() => {
+                                                setArquivos(prev => prev.filter((_, i) => i !== index));
+                                            }}
+                                        >
+                                            🗑️
+                                        </button>
+                                    </div>
+                                </div>
                             ))}
                         </div>
+
+
                     )}
 
-                    <label htmlFor="inputImagem" className="botao-upload">
+                    <label htmlFor="inputImagem" className={styles.botaoUpload}>
                         Adicionar imagem
                     </label>
 
@@ -182,11 +194,11 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcl
                         onChange={e => setVideos(Array.from(e.target.files))}
                     />
 
-                    <label htmlFor="inputVideo" className="botao-upload">
+                    <label htmlFor="inputVideo" className={styles.botaoUpload}>
                         Adicionar vídeo
                     </label>
 
-                    <button className='save-button' onClick={handleUpdate}>Salvar alterações</button>
+                    <button className={styles.saveButton} onClick={handleUpdate}>Salvar alterações</button>
                 </div>
 
             </div>
@@ -195,17 +207,17 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcl
                 <div className="carrossel-overlay">
                     <div className="carrossel">
                         {imagens.map((img, idx) => (
-                            <div key={idx} className="carrossel-item">
+                            <div key={idx} className={styles.carroselItem}>
                                 <img src={`http://localhost:5000/${img.path.replace(/\\/g, '/')}`} alt={`Imagem ${idx}`} />
                                 <button
-                                    className="delete-button"
+                                    className={styles.deleteButton}
                                     onClick={() => handleDeleteImage(img.filename)}
                                 >
                                     Excluir
                                 </button>
                             </div>
                         ))}
-                        <button className='carousel-close-button' onClick={() => setShowCarousel(false)}>Fechar</button>
+                        <button className={styles.carouselCloseButton} onClick={() => setShowCarousel(false)}>Fechar</button>
                     </div>
                 </div>
             )}

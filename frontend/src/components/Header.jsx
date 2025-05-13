@@ -1,9 +1,9 @@
-import '../styles/Header.css';
+import styles from '../styles/Header.module.css';
 
 export default function Header() {
   return (
-    <header className="header">
-      <div className="logo">
+    <header className={styles.header}>
+      <div className={styles.logo}>
         <h1>Pi Mananger</h1>
       </div>
       <nav>

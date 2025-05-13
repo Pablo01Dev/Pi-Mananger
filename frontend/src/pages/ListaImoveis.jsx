@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import '../styles/ListaImoveis.css';
+import styles from '../styles/ListaImoveis.module.css';
 
 
 
@@ -43,7 +43,7 @@ export default function ListaImoveis() {
   };
 
   return (
-    <div className="lista-imoveis">
+    <div className={styles.listaImoveis}>
 
       <h2>Imóveis Cadastrados</h2>
       {imoveis.length === 0 ? (
@@ -53,7 +53,7 @@ export default function ListaImoveis() {
           <button
             onClick={handleDeleteSelected}
             disabled={selectedImoveis.length === 0} // Desabilita o botão se nenhum imóvel for selecionado
-            className="delete-button"
+            className={StyleSheet.deleteButton}
           >
             Excluir Selecionados
           </button>
@@ -69,7 +69,7 @@ export default function ListaImoveis() {
                 <p>{imovel.descricao}</p>
                 <p>Status: {imovel.status}</p>
                 {imovel.imagens && imovel.imagens.length > 0 && (
-                  <div className="imagens">
+                  <div className={StyleSheet.imagens}>
                     {imovel.imagens.map((img, index) => (
                       <img
                         key={index}

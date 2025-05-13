@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import '../styles/Home.css';
-import CardImovel from '../components/CardImovel';
-import NovoImovel from '../components/NovoImovel';
+import styles from '../styles/Home.module.css';
+import CardImovel from '../components/Imoveis/CardImovel';
+import NovoImovel from '../components/Imoveis/NovoImovel';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import ListaCards from '../components/ListaCards';
+import ListaCards from '../components/Imoveis/ListaCards';
 
 export default function Home() {
   const [imoveis, setImoveis] = useState([]);
@@ -79,8 +79,8 @@ export default function Home() {
   };
 
   return (
-    <div className="home-container">
-      <div className="home-nav">
+    <div className={styles.homeContainer}>
+      <div className={styles.homeNav}>
         <ul>
           <li
             className={abaSelecionada === 'cadastrar' ? 'ativo' : ''}
@@ -108,9 +108,9 @@ export default function Home() {
           </li>
         </ul>
 
-        <button className='novo-button' type="button" onClick={() => setMostrarModal(true)}>
-          <h4 className='novo'>Novo Imóvel</h4>
-          <p className='mais'>+</p>
+        <button className={styles.novoButton} type="button" onClick={() => setMostrarModal(true)}>
+          <h4 className={styles.novo}>Novo Imóvel</h4>
+          <p className={styles.mais}>+</p>
         </button>
       </div>
       <ListaCards imoveisFiltrados={imoveisFiltrados} handleDragEnd={handleDragEnd} onExcluir={handleExcluirImovel} />

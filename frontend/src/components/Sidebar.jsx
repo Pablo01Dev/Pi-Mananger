@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom';
-import '../styles/Sidebar.css';
+import styles from '../styles/Sidebar.module.css';
 
 export default function Sidebar() {
   return (
-    <div className="sidebar">
+    <div className={styles.sideBar}>
       <h2>Painel Admin</h2>
       <nav>
         <ul>

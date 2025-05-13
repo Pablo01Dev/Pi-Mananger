@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import ModalEditarImovel from './ModalEditarImovel';
-import '../styles/CardImovel.css';
+import styles from '../../styles/CardImovel.module.css';
 
 const getStatusColor = (status) => {
     switch (status.toLowerCase()) {
@@ -29,29 +29,29 @@ export default function CardImovel({ imovel, onAtualizar, onExcluir }) {
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     return (
-        <div className="card-imovel" onClick={() => setIsModalOpen(true)}>
-            <div className="status-bar">
+        <div className={styles.cardImovel} onClick={() => setIsModalOpen(true)}>
+            <div className={styles.statusBar}>
                 <p>{imovel.status}</p>
                 <div
-                    className="status-color"
+                    className={styles.statusColor}
                     style={{ backgroundColor: getStatusColor(imovel.status) }}
                 />
             </div>
 
             <h3>{imovel.titulo}</h3>
-            <p className='descript-card'>{imovel.descricao}</p>
+            <p className={styles.descriptCard}>{imovel.descricao}</p>
 
-            <div className="media">
+            <div className={styles.media}>
                 {imovel.imagens?.map((img, idx) => (
                     <img
                         key={idx}
                         src={`http://localhost:5000/${img.path.replace(/\\/g, '/')}`}
                         alt={img.filename}
-                        className="media-image"
+                        className={styles.mediaImage}
                     />
                 ))}
             </div>
-            <div className="date">
+            <div className={styles.date}>
                 {imovel.criadoEm && <p>Criado em: {formatDate(imovel.criadoEm)}</p>}
             </div>
 

@@ -11,7 +11,7 @@
     z-index: 1000; /* para ficar acima de tudo */
   }
   
-  .modal-content {
+  .modalContent {
     background: #fff;
     padding: 2rem;
     border-radius: 8px;

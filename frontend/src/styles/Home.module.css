@@ -8,7 +8,7 @@ body {
   /* Impede a rolagem horizontal da página */
 }
 
-.home-container {
+.homeContainer {
   width: 100%;
   max-width: 100vw;
   /* Garante que o container não seja maior que a largura da tela */
@@ -17,7 +17,7 @@ body {
   overflow-x: hidden;
 }
 
-.home-nav {
+.homeNav {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -31,7 +31,7 @@ body {
   background-color: #f9f9f9;
 }
 
-.home-nav ul {
+.homeNav ul {
   display: flex;
   flex-direction: row;
   gap: 2em;
@@ -40,7 +40,7 @@ body {
   margin: 0;
 }
 
-.home-nav ul li {
+.homeNav ul li {
   cursor: pointer;
   padding: 8px 12px;
   border-radius: 7px;
@@ -49,18 +49,18 @@ body {
   align-items: center;
 }
 
-.home-nav ul li:hover {
+.homeNav ul li:hover {
   font-size: 18px;
 
 }
 
-.home-nav ul li.ativo {
+.homeNav ul li.ativo {
   font-size: 18px;
   color: rgb(0, 0, 0);
   font-weight: bold;
 }
 
-.home-nav button {
+.homeNav button {
   padding: 0.8em 1.5em;
   border: none;
   border-radius: 7px;
@@ -72,7 +72,7 @@ body {
   transition: background-color 0.2s ease;
 }
 
-.home-nav button:hover {
+.homeNav button:hover {
   background-color: #ebb000;
 }
 

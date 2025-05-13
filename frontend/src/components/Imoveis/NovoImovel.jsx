@@ -83,8 +83,8 @@ export default function NovoImovel({ onClose, onSuccess, onExcluir }) {
   };
 
   return (
-    <div className="modal">
-      <div className="modal-content">
+    <div className={styles.modal}>
+      <div className={styles.modalContent}>
         <h2>Novo Imóvel</h2>
 
         {error && <div className="error-message">{error}</div>}
