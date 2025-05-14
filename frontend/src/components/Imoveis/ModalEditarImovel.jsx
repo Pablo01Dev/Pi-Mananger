@@ -2,6 +2,7 @@ import { useState } from 'react';
 import axios from 'axios';
 import styles from '../../styles/ModalEditarImovel.module.css';
 import { FiTrash } from 'react-icons/fi';
+import { MdOutlineClose } from "react-icons/md";
 
 
 export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcluir }) {
@@ -110,7 +111,7 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcl
                         e.stopPropagation();
                         onClose();
                     }}>
-                        X
+                        <MdOutlineClose />
                     </button>
                 </div>
                 <div className={styles.body}>
@@ -200,27 +201,30 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcl
                     <label htmlFor="inputVideo" className={styles.botaoUpload}>
                         Adicionar vídeo
                     </label>
-
-                    <button className={styles.saveButton} onClick={handleUpdate}>Salvar alterações</button>
+                    <div className={styles.footerButtons}>
+                        <button className={styles.saveButton} onClick={handleUpdate}>Salvar alterações</button>
+                    </div>
                 </div>
 
             </div>
 
             {showCarousel && (
-                <div className={styles.carrosselOverlay}>
-                    <div className={styles.carrossel}>
+                <div className={styles.carouselOverlay}>
+                    <div className={styles.carouselTop}>
+                        <button className={styles.carouselCloseButton} onClick={() => setShowCarousel(false)}>Fechar</button>
+                    </div>
+                    <div className={styles.carousel}>
                         {imagens.map((img, idx) => (
-                            <div key={idx} className={styles.carroselItem}>
+                            <div key={idx} className={styles.carouselItem}>
                                 <img src={`http://localhost:5000/${img.path.replace(/\\/g, '/')}`} alt={`Imagem ${idx}`} />
                                 <button
-                                    className={styles.deleteButton}
+                                    className={styles.imageDeleteButton}
                                     onClick={() => handleDeleteImage(img.filename)}
                                 >
                                     Excluir
                                 </button>
                             </div>
                         ))}
-                        <button className={styles.carouselCloseButton} onClick={() => setShowCarousel(false)}>Fechar</button>
                     </div>
                 </div>
             )}
