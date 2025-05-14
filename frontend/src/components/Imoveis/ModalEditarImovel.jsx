@@ -209,11 +209,11 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcl
             </div>
 
             {showCarousel && (
-                <div className={styles.carouselOverlay}>
+                <div className={styles.carouselOverlay} onClick={() => setShowCarousel(false)}>
                     <div className={styles.carouselTop}>
                         <button className={styles.carouselCloseButton} onClick={() => setShowCarousel(false)}>Fechar</button>
                     </div>
-                    <div className={styles.carousel}>
+                    <div className={styles.carousel}  onClick={(e) => e.stopPropagation()}>
                         {imagens.map((img, idx) => (
                             <div key={idx} className={styles.carouselItem}>
                                 <img src={`http://localhost:5000/${img.path.replace(/\\/g, '/')}`} alt={`Imagem ${idx}`} />

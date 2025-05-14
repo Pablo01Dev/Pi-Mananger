@@ -30,6 +30,15 @@
 
 }
 
+.deleteButton {
+  background-color: rgb(255, 113, 113);
+  color: var(--preto);
+  padding: 6px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
 input:hover,
 textarea:hover {
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -168,6 +177,11 @@ textarea:hover {
   z-index: 2;
 }
 
+.closeButton:hover {
+  font-size: 28px;
+
+}
+
 /* Carrossel */
 .carouselOverlay {
   position: fixed;
@@ -268,7 +282,4 @@ textarea:hover {
   transition: .3s;
 }
 
-.closeButton:hover {
-  font-size: 28px;
 
-}
