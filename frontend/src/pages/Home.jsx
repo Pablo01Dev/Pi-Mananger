@@ -126,9 +126,6 @@ export default function Home() {
           onExcluir={handleExcluirImovel}
         />
       )}
-
-
-      )}
     </div>
   );
 }
