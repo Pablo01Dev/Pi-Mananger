@@ -76,21 +76,21 @@ body {
   background-color: #ebb000;
 }
 
-button.novo-button {
+.div-pai {
+  display: flex;
+  justify-content: flex-end; 
+  align-items: flex-end;     
+  height: 100%;     
+}
+
+.novoButton { 
   display: flex;
   flex-direction: row;
   align-items: center;
+  padding: 0;
   height: 3em;
   width: 11em;
   justify-content: space-between;
-  padding: .5em .5em .5em 1em; /* Especificando o padding novamente */
   box-sizing: border-box;
 }
-.mais {
-  background-color: #df9c00;
-  padding: .5em .7em;
-  border-radius: 7px;
-  margin: 0;
-}
-
 

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
-import styles from '../../styles/ModalEditarImovel.module.css';
+import styles from '../../styles/ModalImovel.module.css';
 import { FiTrash } from 'react-icons/fi';
 import { MdOutlineClose } from "react-icons/md";
 

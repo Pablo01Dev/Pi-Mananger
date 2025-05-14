@@ -1,10 +1,8 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import styles from '../styles/Home.module.css';
-import CardImovel from '../components/Imoveis/CardImovel';
 import NovoImovel from '../components/Imoveis/NovoImovel';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import ListaCards from '../components/Imoveis/ListaCards';
+import styles from '../styles/Home.module.css';
 
 export default function Home() {
   const [imoveis, setImoveis] = useState([]);
@@ -108,22 +106,27 @@ export default function Home() {
           </li>
         </ul>
 
-        <button className={styles.novoButton} type="button" onClick={() => setMostrarModal(true)}>
-          <h4 className={styles.novo}>Novo Imóvel</h4>
-          <p className={styles.mais}>+</p>
-        </button>
+        <div className="div-pai">
+          <button className={styles.novoButton} type="button" onClick={() => setMostrarModal(true)}>
+            <h4 className={styles.novo}>Novo Imóvel</h4>
+            <p className={styles.mais}>+</p>
+          </button>
+        </div>
+
       </div>
       <ListaCards imoveisFiltrados={imoveisFiltrados} handleDragEnd={handleDragEnd} onExcluir={handleExcluirImovel} />
 
       {mostrarModal && (
         <NovoImovel
           onClose={() => setMostrarModal(false)}
-          onSuccess={() => {
+          onCriar={() => {
             setMostrarModal(false);
-            carregarImoveis();
+            carregarImoveis(); // Refatorado para carregar imóveis após a criação
           }}
           onExcluir={handleExcluirImovel}
         />
+      )}
+
 
       )}
     </div>

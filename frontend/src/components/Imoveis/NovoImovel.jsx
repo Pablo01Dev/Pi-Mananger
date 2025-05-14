@@ -1,124 +1,167 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import axios from 'axios';
+import styles from '../../styles/ModalImovel.module.css';
+import { FiTrash } from 'react-icons/fi';
+import { MdOutlineClose } from "react-icons/md";
 
-export default function NovoImovel({ onClose, onSuccess, onExcluir }) {
+export default function ModalNovoImovel({ onClose, onCriar }) {
   const [titulo, setTitulo] = useState('');
   const [descricao, setDescricao] = useState('');
   const [status, setStatus] = useState('cadastrar');
-  const [ordem, setOrdem] = useState(0); // Estado para a ordem
-  const [imagem, setImagem] = useState(null);
-  const [video, setVideo] = useState(null);
-  const [error, setError] = useState(''); // Para mensagens de erro
+  const [arquivos, setArquivos] = useState([]);
+  const [videos, setVideos] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);  // Controle de estado de carregamento
 
-  // Função para buscar o último imóvel e pegar a ordem
-  const getUltimoImovel = async () => {
-    try {
-      const res = await axios.get('http://localhost:5000/api/imoveis/ultimo');
-      if (res.data && res.data.ordem !== undefined) {
-        setOrdem(res.data.ordem + 1); // Define a ordem como o próximo número
-      }
-    } catch (err) {
-      console.error('Erro ao buscar o último imóvel', err);
-      setOrdem(0); // Se não encontrar nenhum imóvel, começa do zero
-    }
-  };
+const handleCreate = async () => {
+  setIsLoading(true);  // Inicia o carregamento
 
-  // Chama a função para buscar o último imóvel assim que o componente for montado
-  useEffect(() => {
-    getUltimoImovel();
-  }, []);
+  try {
+    // Criação do imóvel
+    const response = await axios.post('http://localhost:5000/api/imoveis', {
+      titulo,
+      descricao,
+      status,
+    });
 
-  const handleSubmit = async () => {
-    setError(''); // Limpa os erros antes de tentar enviar
+    const novoImovel = response.data;
 
-    try {
-      if (!titulo.trim()) {
-        return setError('Preencha o título do imóvel!');
-      }
-
-      // Cadastra o imóvel
-      const res = await axios.post('http://localhost:5000/api/imoveis', {
-        titulo,
-        descricao,
-        status,
-        ordem, // Passando a ordem
-      });
-      console.log(res.data); // Verifique o que está sendo retornado da API
-
-      const novoImovel = res.data;
-
-      // Envia imagem se houver
-      if (imagem) {
+    // Função para upload de imagens
+    const uploadImagens = async () => {
+      for (const img of arquivos) {
         const formDataImg = new FormData();
-        formDataImg.append('file', imagem);
+        formDataImg.append('arquivo', img);
         await axios.post(
           `http://localhost:5000/api/upload/${novoImovel._id}/imagens`,
           formDataImg,
-          {
-            headers: { 'Content-Type': 'multipart/form-data' },
-          }
+          { headers: { 'Content-Type': 'multipart/form-data' } }
         );
       }
+    };
 
-      // Envia vídeo se houver
-      if (video) {
+    // Função para upload de vídeos
+    const uploadVideos = async () => {
+      for (const vid of videos) {
         const formDataVid = new FormData();
-        formDataVid.append('file', video);
+        formDataVid.append('arquivo', vid);
         await axios.post(
           `http://localhost:5000/api/upload/${novoImovel._id}/videos`,
           formDataVid,
-          {
-            headers: { 'Content-Type': 'multipart/form-data' },
-          }
+          { headers: { 'Content-Type': 'multipart/form-data' } }
         );
       }
+    };
 
-      alert('Imóvel cadastrado com sucesso!');
-      onSuccess(); // Atualiza a lista de imóveis ou fecha modal
+    // Executa os uploads de forma controlada
+    await uploadImagens();
+    await uploadVideos();
 
-    } catch (err) {
-      console.error(err);
-      setError('Erro ao cadastrar imóvel.');
-    }
-  };
+    alert('Imóvel criado com sucesso!');
+    onCriar(); // Chama a função passada via prop
+
+    onClose(); // Fecha o modal
+
+  } catch (err) {
+    console.error('Erro ao criar imóvel:', err.response?.data || err.message);
+    alert('Erro ao criar imóvel.');
+  } finally {
+    setIsLoading(false);  // Finaliza o carregamento
+  }
+};
+
 
   return (
-    <div className={styles.modal}>
+    <div className={`${styles.modal} ${styles.novoImovel}`}>
       <div className={styles.modalContent}>
-        <h2>Novo Imóvel</h2>
+        <div className={styles.topButtons}>
+          <button className={styles.closeButton} onClick={onClose}>
+            <MdOutlineClose />
+          </button>
+        </div>
 
-        {error && <div className="error-message">{error}</div>}
+        <div className={styles.body}>
+          <h2>Novo Imóvel</h2>
 
-        <label>Título</label>
-        <input value={titulo} onChange={(e) => setTitulo(e.target.value)} />
+          <label>Título</label>
+          <input
+            type="text"
+            value={titulo}
+            onChange={e => setTitulo(e.target.value)}
+          />
 
-        <label>Descrição</label>
-        <textarea value={descricao} onChange={(e) => setDescricao(e.target.value)} />
+          <label>Descrição</label>
+          <textarea
+            value={descricao}
+            onChange={e => setDescricao(e.target.value)}
+          />
 
-        <label>Status</label>
-        <select value={status} onChange={(e) => setStatus(e.target.value)}>
-          <option value="cadastrar">Cadastrar</option>
-          <option value="fazer tour 360º">Fazer tour 360º</option>
-          <option value="fazer video">Fazer vídeo</option>
-          <option value="concluído">Concluído</option>
-        </select>
+          <label>Status</label>
+          <select value={status} onChange={e => setStatus(e.target.value)}>
+            <option value="cadastrar">Cadastrar</option>
+            <option value="fazer video">Fazer Vídeo</option>
+            <option value="fazer tour 360º">Fazer Tour 360º</option>
+            <option value="concluído">Concluído</option>
+          </select>
 
-        <label>Imagem</label>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e) => setImagem(e.target.files[0])}
-        />
+          <label>Imagens</label>
+          <input
+            type="file"
+            id="inputImagem"
+            style={{ display: 'none' }}
+            multiple
+            accept="image/*"
+            onChange={e => setArquivos(Array.from(e.target.files))}
+          />
+          <label htmlFor="inputImagem" className={styles.botaoUpload}>
+            Adicionar imagem
+          </label>
 
-        <label>Vídeo</label>
-        <input
-          type="file"
-          accept="video/mp4"
-          onChange={(e) => setVideo(e.target.files[0])}
-        />
+          {arquivos.length > 0 && (
+            <div className={styles.previewContainer}>
+              {arquivos.map((file, index) => (
+                <div key={index} className={styles.imagemPreviewWrapper}>
+                  <img
+                    src={URL.createObjectURL(file)}
+                    alt={`preview-${index}`}
+                    className={styles.imagemPreview}
+                  />
+                  <div className={styles.imagemOverlay}>
+                    <button
+                      className={styles.iconeLixeira}
+                      onClick={() =>
+                        setArquivos(prev => prev.filter((_, i) => i !== index))
+                      }
+                    >
+                      <FiTrash />
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
 
-        <button onClick={handleSubmit}>Cadastrar</button>
-        <button onClick={onClose}>Cancelar</button>
+          <label>Vídeos</label>
+          <input
+            type="file"
+            id="inputVideo"
+            style={{ display: 'none' }}
+            multiple
+            accept="video/mp4"
+            onChange={e => setVideos(Array.from(e.target.files))}
+          />
+          <label htmlFor="inputVideo" className={styles.botaoUpload}>
+            Adicionar vídeo
+          </label>
+
+          <div className={styles.footerButtons}>
+            <button 
+              className={styles.saveButton} 
+              onClick={handleCreate}
+              disabled={isLoading}  // Desabilita o botão durante o carregamento
+            >
+              {isLoading ? 'Criando Imóvel...' : 'Criar Imóvel'}
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
