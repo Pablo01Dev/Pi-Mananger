@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import axios from 'axios';
 import styles from '../../styles/ModalImovel.module.css';
-import { FiTrash } from 'react-icons/fi';
+import { MdDelete } from "react-icons/md"
 import { MdOutlineClose } from "react-icons/md";
-
 
 export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcluir }) {
     const [titulo, setTitulo] = useState(imovel.titulo);
@@ -14,6 +13,9 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcl
     const [showCarousel, setShowCarousel] = useState(false);
     const [imagens, setImagens] = useState(imovel.imagens || []);
     const [imagensParaExcluir, setImagensParaExcluir] = useState([]);
+    const [confirmandoExclusao, setConfirmandoExclusao] = useState(false);
+    const [mostrarConfirmacao, setMostrarConfirmacao] = useState(false);
+
 
     const handleUpdate = async () => {
         try {
@@ -23,7 +25,6 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcl
                 status,
             });
 
-            // Upload múltiplas imagens
             for (const img of arquivos) {
                 const formDataImg = new FormData();
                 formDataImg.append('arquivo', img);
@@ -35,7 +36,6 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcl
                 setImagens(prev => [...prev, ...response.data.imagens]);
             }
 
-            // Upload múltiplos vídeos
             for (const vid of videos) {
                 const formDataVid = new FormData();
                 formDataVid.append('arquivo', vid);
@@ -46,7 +46,6 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcl
                 );
             }
 
-            // Exclusão de imagens
             for (const filename of imagensParaExcluir) {
                 try {
                     await axios.delete(`http://localhost:5000/api/upload/${imovel._id}/${filename}`);
@@ -75,12 +74,9 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcl
     const handleDeleteImovel = async () => {
         try {
             const response = await axios.delete(`http://localhost:5000/api/imoveis/${imovel._id}`);
-
             if (response.status === 200) {
                 alert('Imóvel excluído com sucesso!');
                 onExcluir(imovel._id);
-
-
                 setTimeout(() => {
                     onClose();
                 }, 500);
@@ -92,7 +88,6 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcl
         }
     };
 
-
     return (
         <div className={styles.modal}>
             <div className={styles.modalContent}>
@@ -101,12 +96,13 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcl
                         className={styles.deleteButton}
                         onClick={(e) => {
                             e.stopPropagation();
-                            console.log("Função onExcluir chamada");
-                            onExcluir(imovel._id);
+                            setMostrarConfirmacao(true);
                         }}
                     >
-                        Excluir Imóvel
+                        <MdDelete />
+                        <span className={styles.tooltip}>Excluir imóvel</span>
                     </button>
+
                     <button className={styles.closeButton} onClick={(e) => {
                         e.stopPropagation();
                         onClose();
@@ -114,9 +110,10 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcl
                         <MdOutlineClose />
                     </button>
                 </div>
+
+
                 <div className={styles.body}>
                     <h2>Editar Imóvel</h2>
-
                     <label>Título</label>
                     <input type="text" value={titulo} onChange={e => setTitulo(e.target.value)} />
 
@@ -130,8 +127,8 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcl
                         <option value="fazer tour 360º">Fazer Tour 360º</option>
                         <option value="concluído">Concluído</option>
                     </select>
-
                 </div>
+
                 <div className={styles.arquivoUpload}>
                     <label>Imagens</label>
                     {imagens?.length > 0 && (
@@ -169,19 +166,15 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcl
                                                 setArquivos(prev => prev.filter((_, i) => i !== index));
                                             }}
                                         >
-                                            <FiTrash />
+                                            <MdDelete />
                                         </button>
                                     </div>
                                 </div>
                             ))}
                         </div>
-
-
                     )}
 
-                    <label htmlFor="inputImagem" className={styles.botaoUpload}>
-                        Adicionar imagem
-                    </label>
+                    <label htmlFor="inputImagem" className={styles.botaoUpload}>Adicionar imagem</label>
 
                     <label>Vídeos</label>
                     {imovel.video?.link && (
@@ -189,6 +182,7 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcl
                             <source src={imovel.video.link} type="video/mp4" />
                         </video>
                     )}
+
                     <input
                         type="file"
                         id="inputVideo"
@@ -198,14 +192,12 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcl
                         onChange={e => setVideos(Array.from(e.target.files))}
                     />
 
-                    <label htmlFor="inputVideo" className={styles.botaoUpload}>
-                        Adicionar vídeo
-                    </label>
+                    <label htmlFor="inputVideo" className={styles.botaoUpload}>Adicionar vídeo</label>
+
                     <div className={styles.footerButtons}>
                         <button className={styles.saveButton} onClick={handleUpdate}>Salvar alterações</button>
                     </div>
                 </div>
-
             </div>
 
             {showCarousel && (
@@ -213,7 +205,7 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcl
                     <div className={styles.carouselTop}>
                         <button className={styles.carouselCloseButton} onClick={() => setShowCarousel(false)}>Fechar</button>
                     </div>
-                    <div className={styles.carousel}  onClick={(e) => e.stopPropagation()}>
+                    <div className={styles.carousel} onClick={(e) => e.stopPropagation()}>
                         {imagens.map((img, idx) => (
                             <div key={idx} className={styles.carouselItem}>
                                 <img src={`http://localhost:5000/${img.path.replace(/\\/g, '/')}`} alt={`Imagem ${idx}`} />
@@ -228,6 +220,22 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcl
                     </div>
                 </div>
             )}
+            {mostrarConfirmacao && (
+                <div className={styles.confirmacaoOverlay} onClick={() => setMostrarConfirmacao(false)}>
+                    <div className={styles.confirmacaoModal} onClick={e => e.stopPropagation()}>
+                        <h3>Tem certeza que deseja excluir este imóvel?</h3>
+                        <div className={styles.botoesConfirmacao}>
+                            <button className={styles.confirmarButton} onClick={handleDeleteImovel}>
+                                Sim, excluir
+                            </button>
+                            <button className={styles.cancelarButton} onClick={() => setMostrarConfirmacao(false)}>
+                                Cancelar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
         </div>
     );
 }

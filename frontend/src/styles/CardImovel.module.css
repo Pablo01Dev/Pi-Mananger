@@ -6,10 +6,45 @@
     background-color: white;
     border-radius: 7px;
     box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.03);
+    color: var(--preto);
 }
 
 .cardImovel:hover {
     box-shadow: 6px 6px 8px rgba(0, 0, 0, 0.08);
+}
+
+
+.confirmacaoWrapper {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    background-color: #fefefe;
+    border: 1px solid #ccc;
+    padding: 8px;
+    border-radius: 6px;
+}
+
+.confirmacaoTexto {
+    font-size: 0.9rem;
+    color: #333;
+}
+
+.confirmarButton {
+    background-color: #e53935;
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.cancelarButton {
+    background-color: #9e9e9e;
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: pointer;
 }
 
 .descriptCard {

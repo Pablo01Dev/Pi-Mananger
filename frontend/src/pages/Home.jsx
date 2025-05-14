@@ -81,25 +81,25 @@ export default function Home() {
       <div className={styles.homeNav}>
         <ul>
           <li
-            className={abaSelecionada === 'cadastrar' ? 'ativo' : ''}
+            className={abaSelecionada === 'cadastrar' ? styles.ativo : ''}
             onClick={() => setAbaSelecionada('cadastrar')}
           >
             Cadastrar
           </li>
           <li
-            className={abaSelecionada === 'fazer tour 360º' ? 'ativo' : ''}
+            className={abaSelecionada === 'fazer tour 360º' ? styles.ativo : ''}
             onClick={() => setAbaSelecionada('fazer tour 360º')}
           >
             Tour 360º
           </li>
           <li
-            className={abaSelecionada === 'fazer video' ? 'ativo' : ''}
+            className={abaSelecionada === 'fazer video' ? styles.ativo : ''}
             onClick={() => setAbaSelecionada('fazer video')}
           >
             Vídeo
           </li>
           <li
-            className={abaSelecionada === 'concluído' ? 'ativo' : ''}
+            className={abaSelecionada === 'concluído' ? styles.ativo : ''}
             onClick={() => setAbaSelecionada('concluído')}
           >
             Concluído
