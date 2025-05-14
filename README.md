@@ -1,30 +1,30 @@
-Pi Manager
-Pi Manager é um software de gestão interna voltado para imobiliárias, desenvolvido com o objetivo de organizar e otimizar processos internos da empresa.
+# Pi Manager
 
-✨ Funcionalidades Atuais
-Gestão da esteira de imóveis
-Acompanha o fluxo completo desde o pré-cadastro, captação e edição de materiais visuais, até a publicação do anúncio final.
+**Pi Manager** é um software de gestão interna voltado para imobiliárias, desenvolvido com o objetivo de organizar e otimizar processos internos da empresa.
 
-Controle de impressos
-Gerencia demandas de material impresso, com controle de valores gastos e tempo de produção.
+## ✨ Funcionalidades Atuais
 
-🛠️ Tecnologias Utilizadas
-Frontend: React + Vite
+* **Gestão da esteira de imóveis**
+  Acompanha o fluxo completo desde o pré-cadastro, captação e edição de materiais visuais, até a publicação do anúncio final.
 
-Backend: Node.js + Express
+* **Controle de impressos**
+  Gerencia demandas de material impresso, com controle de valores gastos e tempo de produção.
 
-Banco de dados: MongoDB
+## 🛠️ Tecnologias Utilizadas
 
-Controle de versão: Git + GitHub
+* **Frontend:** React + Vite
+* **Backend:** Node.js + Express
+* **Banco de dados:** MongoDB
+* **Controle de versão:** Git + GitHub
 
-As tecnologias podem variar conforme o ambiente e as necessidades da aplicação.
+> *As tecnologias podem variar conforme o ambiente e as necessidades da aplicação.*
 
-🚧 Próximas funcionalidades
-Integração com outros setores da imobiliária
+## 🚧 Próximas funcionalidades
 
-Automação de notificações e tarefas
+* Integração com outros setores da imobiliária
+* Automação de notificações e tarefas
+* Painel de relatórios e indicadores de desempenho
 
-Painel de relatórios e indicadores de desempenho
+## 📦 Disponibilidade
 
-📦 Disponibilidade
-O sistema ainda está em desenvolvimento e em breve estará disponível para uso.
+O sistema ainda está em desenvolvimento e **em breve estará disponível** para uso.
