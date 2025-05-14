@@ -65,10 +65,9 @@ export default function Home() {
       const response = await axios.delete(`http://localhost:5000/api/imoveis/${imovelId}`);
 
       if (response.status === 200) {
-        alert('Imóvel excluído com sucesso!');
-        // Atualiza a lista de imóveis após a exclusão
+        // REMOVA O ALERTA DAQUI
         setImoveis(imoveis.filter(imovel => imovel._id !== imovelId));
-        setMostrarModal(false); // Fecha o modal após a exclusão
+        setMostrarModal(false);
       }
     } catch (err) {
       console.error('Erro ao excluir imóvel:', err);

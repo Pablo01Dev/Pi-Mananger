@@ -15,6 +15,7 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcl
     const [imagensParaExcluir, setImagensParaExcluir] = useState([]);
     const [confirmandoExclusao, setConfirmandoExclusao] = useState(false);
     const [mostrarConfirmacao, setMostrarConfirmacao] = useState(false);
+    const [isDeleting, setIsDeleting] = useState(false);
 
 
     const handleUpdate = async () => {
@@ -66,27 +67,28 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcl
         }
     };
 
-    const handleDeleteImage = (filename) => {
-        setImagensParaExcluir((prev) => [...prev, filename]);
-        setImagens((prev) => prev.filter(img => img.filename !== filename));
-    };
-
     const handleDeleteImovel = async () => {
+        if (isDeleting) return;
+        setIsDeleting(true);
+
         try {
             const response = await axios.delete(`http://localhost:5000/api/imoveis/${imovel._id}`);
+
             if (response.status === 200) {
+                // MANTENHA APENAS UM ALERTA AQUI
                 alert('Imóvel excluído com sucesso!');
-                onExcluir(imovel._id);
-                setTimeout(() => {
-                    onClose();
-                }, 500);
+                if (onExcluir) onExcluir(imovel._id);
+                setMostrarConfirmacao(false);
+                setTimeout(onClose, 300);
             }
         } catch (err) {
-            const errorMessage = err.response ? err.response.data.erro || err.response.data : err.message;
-            console.error('Erro ao excluir imóvel:', errorMessage);
-            alert(`Erro ao excluir imóvel: ${errorMessage}`);
+            console.error('Erro ao excluir imóvel:', err);
+            alert('Erro ao excluir imóvel.');
+        } finally {
+            setIsDeleting(false);
         }
     };
+
 
     return (
         <div className={styles.modal}>
@@ -221,14 +223,37 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcl
                 </div>
             )}
             {mostrarConfirmacao && (
-                <div className={styles.confirmacaoOverlay} onClick={() => setMostrarConfirmacao(false)}>
-                    <div className={styles.confirmacaoModal} onClick={e => e.stopPropagation()}>
+                <div
+                    className={styles.confirmacaoOverlay}
+                    onClick={() => {
+                        // Apenas fecha o modal se o usuário clicar fora da caixa de confirmação e não tiver confirmado a exclusão
+                        if (!isDeleting) { // Verifica se a exclusão não está em andamento
+                            setMostrarConfirmacao(false);
+                        }
+                    }}
+                >
+                    <div
+                        className={styles.confirmacaoModal}
+                        onClick={(e) => {
+                            // Impede que o clique no modal (dentro da caixa) feche o modal
+                            e.stopPropagation();
+                        }}
+                    >
                         <h3>Tem certeza que deseja excluir este imóvel?</h3>
                         <div className={styles.botoesConfirmacao}>
-                            <button className={styles.confirmarButton} onClick={handleDeleteImovel}>
+                            <button
+                                className={styles.confirmarButton}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleDeleteImovel(); // Chama a função de exclusão
+                                }}
+                            >
                                 Sim, excluir
                             </button>
-                            <button className={styles.cancelarButton} onClick={() => setMostrarConfirmacao(false)}>
+                            <button
+                                className={styles.cancelarButton}
+                                onClick={() => setMostrarConfirmacao(false)} // Fecha o modal no "Cancelar"
+                            >
                                 Cancelar
                             </button>
                         </div>

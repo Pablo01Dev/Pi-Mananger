@@ -116,23 +116,31 @@ export const deletarImovel = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const imovel = await Imovel.findByIdAndDelete(id);
-
+    const imovel = await Imovel.findById(id);
+    
     if (!imovel) {
-      return res.status(404).json({ erro: 'Imóvel não encontrado.' });
+      return res.status(200).json({ 
+        success: true // Mudamos para 'success' para padronizar
+      });
     }
 
-    // Caminho onde os arquivos do imóvel estão armazenados
+    await Imovel.findByIdAndDelete(id);
+
     const pastaImovel = path.join(ROOT_UPLOAD_DIR, String(id));
-
-    // Verifica se a pasta existe e, se sim, exclui todos os arquivos dentro dela
-    if (fs.existsSync(pastaImovel)) {
-      await fs.remove(pastaImovel); // Remove a pasta e todos os arquivos dentro dela
+    if (await fs.pathExists(pastaImovel)) {
+      await fs.remove(pastaImovel);
     }
 
-    res.status(200).json({ sucesso: 'Imóvel deletado com sucesso!' });
+    res.status(200).json({ 
+      success: true // Retorna apenas o status, sem mensagem
+    });
+
   } catch (err) {
-    res.status(500).json({ erro: 'Erro ao deletar imóvel: ' + err.message });
+    console.error('Erro ao deletar imóvel:', err);
+    res.status(500).json({ 
+      success: false,
+      error: 'Erro ao remover imóvel' 
+    });
   }
 };
 
