@@ -1,0 +1,31 @@
+.container {
+  padding: 20px;
+  background-color: #f4f4f4;
+}
+
+.nav ul {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.nav li {
+  padding: 10px 20px;
+  background-color: #ccc;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.ativo {
+  background-color: white;
+  border: 2px solid #999;
+}
+
+.conteudo {
+  background-color: #eaeaea;
+  padding: 20px;
+  border-radius: 8px;
+}

@@ -1,0 +1,31 @@
+.container {
+    padding: 20px;
+    background-color: #eaeaea;
+    min-height: 100vh;
+}
+
+.tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.tabs button {
+    padding: 10px 20px;
+    background-color: #cfcfcf;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.activeTab {
+    background-color: white;
+    border: 2px solid #999;
+}
+
+.cards {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}

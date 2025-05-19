@@ -1,16 +1,20 @@
 import express from 'express';
 import {
-  criarPlaca,
-  listarPlacas,
-  enviarPlaca,
-  atualizarStatus
-} from '../controllers/placaController.js';
+    criarPlaca,
+    listarPlacas,
+    enviarPlaca,
+    atualizarStatus,
+    listarPlacasPorStatus,
+    deletarPlaca
+} from '../controllers/placa.controller.js';
 
 const router = express.Router();
 
-router.post('/', criarPlaca);                // Criar nova placa
-router.get('/', listarPlacas);               // Listar todas as placas
-router.put('/enviar/:id', enviarPlaca);      // Mudar status para "pagar" + data de envio
-router.put('/status/:id', atualizarStatus);  // Atualizar status para qualquer outro
+router.post('/', criarPlaca);
+router.get('/', listarPlacas);
+router.get('/status/:status', listarPlacasPorStatus);
+router.put('/enviar/:id', enviarPlaca);
+router.put('/status/:id', atualizarStatus);
+router.delete('/:id', deletarPlaca);
 
 export default router;

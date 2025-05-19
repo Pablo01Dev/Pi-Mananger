@@ -41,3 +41,23 @@ export const atualizarStatus = async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 };
+
+export const listarPlacasPorStatus = async (req, res) => {
+  try {
+    const { status } = req.params;
+    const placas = await Placa.find({ status });
+    res.json(placas);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+export const deletarPlaca = async (req, res) => {
+  try {
+    await Placa.findByIdAndDelete(req.params.id);
+    res.status(200).json({ message: 'Placa deletada com sucesso!' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+

@@ -1,6 +1,6 @@
 import { Routes, Route } from 'react-router-dom';
-import Home from './pages/Home';
-import ListaImoveis from './pages/ListaImoveis';
+import Imoveis from './pages/Imoveis';
+import Placas from './pages/Placas'
 import Header from './components/Header';
 import './styles/App.css';
 
@@ -11,8 +11,9 @@ function App() {
         <Header />
         <div className="content">
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/imoveis" element={<ListaImoveis />} />
+            <Route path="/" element={<Imoveis />} />
+            <Route path="/imoveis" element={<Imoveis />} />
+            <Route path="/placas" element={<Placas />} />
           </Routes>
         </div>
       </div>
