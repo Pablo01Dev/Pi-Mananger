@@ -89,6 +89,15 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcl
         }
     };
 
+    const handleDeleteImage = (filename) => {
+        // Remove a imagem da lista visualmente
+        setImagens(prev => prev.filter(img => img.filename !== filename));
+
+        // Adiciona o filename para exclusão no backend
+        setImagensParaExcluir(prev => [...prev, filename]);
+    };
+
+
 
     return (
         <div className={styles.modal}>

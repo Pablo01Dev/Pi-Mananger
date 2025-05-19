@@ -376,3 +376,8 @@ textarea:hover {
   background: none;
   transition: .3s;
 }
+
+textarea {
+  font-family: 'Roboto';
+  font-size: 14px;
+}
