@@ -7,7 +7,7 @@ import {
   atualizarVideo,
   atualizarImovel,
   atualizarOrdem,
-  buscarUltimoImovel // Importando a função
+  buscarUltimoImovel 
 } from '../controllers/imovelController.js';
 
 const router = express.Router();

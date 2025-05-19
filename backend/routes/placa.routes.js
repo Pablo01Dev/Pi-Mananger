@@ -6,7 +6,7 @@ import {
     atualizarStatus,
     listarPlacasPorStatus,
     deletarPlaca
-} from '../controllers/placa.controller.js';
+} from '../controllers/placaController.js';
 
 const router = express.Router();
 

@@ -1,56 +1,40 @@
-// src/components/Pagar.jsx
-import styles from '../styles/Pagar.module.css';
-
-const placas = [
-  {
-    id: 1,
-    dataEnvio: '21/05/2024 - 14:30h',
-    titulo: 'Galpão Venda das Pedras',
-    conteudo: 'Alugue',
-    altura: '100cm',
-    largura: '200cm',
-    material: 'Lona',
-    valor: 'R$480,00',
-    observacao: '',
-  },
-  {
-    id: 2,
-    dataEnvio: '21/05/2024 - 14:30h',
-    titulo: 'Casa Vital Brasil',
-    conteudo: 'Alugue',
-    altura: '100cm',
-    largura: '200cm',
-    material: 'Lona',
-    valor: 'R$480,00',
-    observacao: 'Parceria com Fernando Cabral',
-  },
-];
+import { useEffect, useState } from 'react';
+import styles from '../../styles/Pagar.module.css';
 
 export default function Pagar() {
+  const [placas, setPlacas] = useState([]);
+
+  useEffect(() => {
+    // Supondo que a API seja algo como /api/placas
+    fetch('/api/placas')
+      .then(res => res.json())
+      .then(data => {
+        const filtrarPagamentos = data.filter(p => p.status === 'pagar');
+        setPlacas(filtrarPagamentos);
+      });
+  }, []);
+
   return (
-    <div className={styles.container}>
+    <div className={styles.pagarContainer}>
       <div className={styles.header}>
         <h2>Pagamento pendente</h2>
+        <button className={styles.botaoPago}>Pago</button>
       </div>
 
       {placas.map((placa) => (
         <div key={placa.id} className={styles.card}>
-          <div className={styles.cardHeader}>
+          <div className={styles.linha}>
             <span><strong>Data de envio:</strong> {placa.dataEnvio}</span>
             <span><strong>Título:</strong> {placa.titulo}</span>
-          </div>
-          <div className={styles.cardBody}>
             <span><strong>Conteúdo:</strong> {placa.conteudo}</span>
             <span><strong>Altura:</strong> {placa.altura}</span>
             <span><strong>Largura:</strong> {placa.largura}</span>
             <span><strong>Material:</strong> {placa.material}</span>
-            <span><strong>Valor:</strong> {placa.valor}</span>
+            <span><strong>Valor:</strong> R${placa.valor.toFixed(2)}</span>
             <input type="checkbox" />
           </div>
           {placa.observacao && (
-            <div className={styles.cardFooter}>
-              <small>Obs: {placa.observacao}</small>
-            </div>
+            <p className={styles.observacao}>Obs: {placa.observacao}</p>
           )}
         </div>
       ))}

@@ -1,8 +1,7 @@
 import express from 'express';
-import userRoutes from './routes/userRoutes.js';  // Certifique-se de que o caminho está correto
-import uploadRoutes from './routes/upload.routes.js';  // Certifique-se de que o caminho está correto
+
 import imovelRoutes from './routes/imovel.routes.js';
-import marketingRoutes from './routes/marketing.routes.js';
+import placaRoutes from './routes/placa.routes.js';
 
 
 
@@ -13,13 +12,13 @@ router.get('/', (req, res) => {
   res.send('API funcionando!');
 });
 
-router.use('/users', userRoutes);
-router.use('/upload', uploadRoutes);
+
 router.use('/imoveis', imovelRoutes);
-router.use('/marketing', marketingRoutes);
+router.use('/placas', placaRoutes);
 
 
 
+  
 
 export default router;
 
