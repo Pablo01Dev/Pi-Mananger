@@ -8,9 +8,11 @@ const placaSchema = new mongoose.Schema({
   tipo: { type: String, enum: ['Alugue', 'Compre', 'Alugue ou compre', 'Outros'], required: true },
   observacao: { type: String },
   status: { type: String, enum: ['produzir', 'pagar', 'pago', 'disponivel', 'usada'], default: 'produzir' },
-  dataEnvio: { type: Date }
+  dataEnvio: { type: Date },
+  valor: { type: Number }  // <-- Adicione este campo
 }, {
   timestamps: true
 });
+
 
 export default mongoose.model('Placa', placaSchema);

@@ -63,7 +63,7 @@ export default function Pagar() {
 
     <div className={styles.pagarContainer}>
       <div className={styles.heroTitle}>
-        <h2>Placas a Pagar</h2>
+        <h2>Pagamento Pendente</h2>
         <div>
           {selecionadas.length > 0 && (
             <button onClick={marcarComoPago} className={styles.botaoPagar}>

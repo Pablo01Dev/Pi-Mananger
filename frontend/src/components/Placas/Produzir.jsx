@@ -20,17 +20,42 @@ export default function Produzir() {
     fetchPlacas();
   }, []);
 
-  const handleEnviar = async (id) => {
+  // Função que calcula o valor e envia para o backend ao clicar em "Enviar"
+  const handleEnviar = async (placa) => {
     try {
-      await axios.put(`http://localhost:5000/api/placas/enviar/${id}`);
+      // Convertendo cm para metros
+      const alturaEmMetros = placa.altura / 100;
+      const larguraEmMetros = placa.largura / 100;
+
+      const valorCalculado = alturaEmMetros * larguraEmMetros * 35;
+
+      const res = await axios.put(`http://localhost:5000/api/placas/enviar/${placa._id}`, {
+        valor: valorCalculado
+      });
+
       setPlacas(prev =>
-        prev.map(p => p._id === id ? { ...p, status: 'pagar' } : p)
+        prev.map(p => p._id === placa._id ? res.data : p)
       );
     } catch (error) {
       console.error('Erro ao enviar a placa:', error);
       alert('Falha ao enviar a placa.');
     }
   };
+
+  const handleUsar = async (placa) => {
+  try {
+    const res = await axios.put(`http://localhost:5000/api/placas/atualizar-status/${placa._id}`, {
+      status: 'usado'
+    });
+
+    setPlacas(prev =>
+      prev.map(p => p._id === placa._id ? res.data : p)
+    );
+  } catch (error) {
+    console.error('Erro ao usar a placa:', error);
+    alert('Falha ao usar a placa.');
+  }
+};
 
   const handleDelete = async (id) => {
     try {
@@ -62,7 +87,8 @@ export default function Produzir() {
                     <CardPlaca
                       key={placa._id}
                       placa={placa}
-                      onEnviar={handleEnviar}
+                      botaoLabel="Enviar"
+                      onBotaoClick={handleEnviar}  // passa a função para o CardPlaca
                       onDelete={handleDelete}
                     />
                   ))

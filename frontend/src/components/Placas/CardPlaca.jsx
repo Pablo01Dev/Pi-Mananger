@@ -1,16 +1,22 @@
 import styles from '../../styles/CardPlaca.module.css';
 import { MdDelete } from "react-icons/md"
 
-export default function CardPlaca({ placa, onEnviar, onDelete }) {
-  const handleEnviar = async () => {
-    try {
-      await onEnviar(placa._id);
-    } catch (error) {
-      console.error('Erro ao enviar a placa:', error);
-      alert('Erro ao enviar a placa. Tente novamente.');
+export default function CardPlaca({ placa, botaoLabel, onBotaoClick, onDelete }) {
+  // Função chamada quando o botão "Enviar" é clicado
+  const handleBotaoClick = async () => {
+    if (onBotaoClick) {
+      try {
+        // Chama a função passada pelo componente pai (Produzir)
+        // passando o objeto placa inteiro para o cálculo e envio do valor
+        await onBotaoClick(placa);
+      } catch (error) {
+        console.error(`Erro ao executar ação "${botaoLabel}" na placa:`, error);
+        alert(`Erro ao executar a ação "${botaoLabel}". Tente novamente.`);
+      }
     }
   };
 
+  // Função para deletar a placa com confirmação
   const handleDelete = async () => {
     if (window.confirm('Tem certeza que deseja excluir esta placa?')) {
       try {
@@ -24,7 +30,6 @@ export default function CardPlaca({ placa, onEnviar, onDelete }) {
 
   return (
     <div className={styles.cardPlaca}>
-
       <div className={styles.delete}>
         <button
           type="button"
@@ -42,9 +47,16 @@ export default function CardPlaca({ placa, onEnviar, onDelete }) {
         {placa.observacao && <h4>Obs: {placa.observacao}</h4>}
       </div>
       <div className={styles.actions}>
-        <button className={styles.botaoEnviar}type="button" onClick={handleEnviar} aria-label="Enviar placa">
-          Enviar
-        </button>
+        {botaoLabel && onBotaoClick && (
+          <button
+            className={styles.botaoEnviar}
+            type="button"
+            onClick={handleBotaoClick} // clique do botão chama a função que chama o pai
+            aria-label={botaoLabel}
+          >
+            {botaoLabel}
+          </button>
+        )}
       </div>
     </div>
   );

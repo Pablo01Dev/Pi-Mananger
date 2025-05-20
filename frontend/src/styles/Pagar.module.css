@@ -1,30 +1,17 @@
 .pagarContainer {
-  padding: 24px 32px;
+  padding: 1em 3em 2em 3em;
   background-color: #f0f0f0;
   min-height: 100vh;
   display: flex;
   justify-content: flex-start;
   align-items: center;
   flex-direction: column;
+  
 }
 
 
 
-.heroTitle h2 {
-  font-size: 1.3rem;
-  font-weight: bold;
-  margin-bottom: 24px;
-  text-align: center;
-}
 
-.heroTitle {
-  background-color: var(--cinza-medio);
-  width: 100%;
-  border-radius: 7px;
-  margin-bottom: 1em;
-  justify-content: center;
-  align-items: center;
-}
 
 .cards {
   display: flex;
@@ -41,21 +28,43 @@
   margin-top: 20px;
 }
 
+.heroTitle {
+  background-color: var(--cinza-medio);
+  width: 100%;
+  height: 2.5em;
+  border-radius: 7px;
+  margin-bottom: 1em;
+  display: flex;
+  justify-content: center; /* centraliza o texto */
+  align-items: center;
+  padding: 0 1em;
+  position: relative; /* para o botão absoluto funcionar */
+}
+
+.heroTitle h2 {
+  font-size: 1.3rem;
+  font-weight: bold;
+  text-align: center;
+  margin: 0; 
+}
+
 .botaoPagar {
   background-color: #1ca0ac;
   color: white;
-  padding: 10px 20px;
+  padding: 4px 20px;
   border: none;
   font-weight: bold;
   font-size: 14px;
   border-radius: 6px;
   cursor: pointer;
-  margin-top: -50px;
-  margin-right: 15px;
-  float: right;
   transition: background-color 0.2s ease-in-out;
+  margin: 0;
+  position: absolute; /* posiciona fora do fluxo */
+  right: 1em; /* distância da borda direita */
+  top: 50%;
+  transform: translateY(-50%); /* centraliza verticalmente */
 }
 
-.botaoPagar:hover {
+agar:hover {
   background-color: #016068;
 }

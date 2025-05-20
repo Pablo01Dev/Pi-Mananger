@@ -1,43 +1,81 @@
 import { useEffect, useState } from 'react';
-import styles from '../../styles/Pagar.module.css';
+import axios from 'axios';
+import CardPlaca from './CardPlaca';
+import styles from '../../styles/Produzir.module.css';
 
-export default function Pagar() {
+const categorias = ['Alugue', 'Compre', 'Compre e Alugue', 'Outros'];
+
+export default function Usadas() {
   const [placas, setPlacas] = useState([]);
 
   useEffect(() => {
-    // Supondo que a API seja algo como /api/placas
-    fetch('/api/placas')
-      .then(res => res.json())
-      .then(data => {
-        const filtrarPagamentos = data.filter(p => p.status === 'pagar');
-        setPlacas(filtrarPagamentos);
-      });
+    async function fetchPlacas() {
+      try {
+        const res = await axios.get('http://localhost:5000/api/placas');
+        setPlacas(res.data);
+      } catch (error) {
+        console.error('Erro ao buscar placas:', error);
+      }
+    }
+    fetchPlacas();
   }, []);
 
-  return (
-    <div className={styles.pagarContainer}>
-      <div className={styles.header}>
-        <h2>Pagamento pendente</h2>
-        <button className={styles.botaoPago}>Pago</button>
-      </div>
+  // Função para marcar a placa como "usado"
+  const handleUsar = async (id) => {
+    try {
+      await axios.put(`http://localhost:5000/api/placas/usar/${id}`);
+      setPlacas(prev =>
+        prev.map(p => p._id === id ? { ...p, status: 'usado' } : p)
+      );
+    } catch (error) {
+      console.error('Erro ao usar a placa:', error);
+      alert('Falha ao usar a placa.');
+    }
+  };
 
-      {placas.map((placa) => (
-        <div key={placa.id} className={styles.card}>
-          <div className={styles.linha}>
-            <span><strong>Data de envio:</strong> {placa.dataEnvio}</span>
-            <span><strong>Título:</strong> {placa.titulo}</span>
-            <span><strong>Conteúdo:</strong> {placa.conteudo}</span>
-            <span><strong>Altura:</strong> {placa.altura}</span>
-            <span><strong>Largura:</strong> {placa.largura}</span>
-            <span><strong>Material:</strong> {placa.material}</span>
-            <span><strong>Valor:</strong> R${placa.valor.toFixed(2)}</span>
-            <input type="checkbox" />
-          </div>
-          {placa.observacao && (
-            <p className={styles.observacao}>Obs: {placa.observacao}</p>
-          )}
-        </div>
-      ))}
+  const handleDelete = async (id) => {
+    try {
+      await axios.delete(`http://localhost:5000/api/placas/${id}`);
+      setPlacas(prev => prev.filter(p => p._id !== id));
+    } catch (error) {
+      console.error('Erro ao deletar a placa:', error);
+      alert('Falha ao deletar a placa.');
+    }
+  };
+
+  return (
+    <div className={styles.container}>
+      <div className={styles.gridCategorias}>
+        {categorias.map(categoria => {
+          const placasFiltradas = placas.filter(
+            p => p.tipo === categoria && p.status === 'usado'
+          );
+
+          return (
+            <div key={categoria} className={styles.colunaCategoria}>
+              <div className={styles.categoria}>
+                {categoria}
+              </div>
+
+              <div className={styles.cards}>
+                {placasFiltradas.length > 0 ? (
+                  placasFiltradas.map(placa => (
+                    <CardPlaca
+                      key={placa._id}
+                      placa={placa}
+                      onBotaoClick={handleUsar}
+                      onDelete={handleDelete}
+                    />
+
+                  ))
+                ) : (
+                  <p className={styles.semPlacas}>—</p>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
