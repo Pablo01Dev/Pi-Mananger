@@ -1,31 +1,72 @@
 .container {
-  padding: 20px;
   background-color: #f4f4f4;
+}
+
+.nav {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1em 4em;
+  margin: 0;
+  color: #797979;
+  width: 100%;
+  box-sizing: border-box;
+  background-color: #f9f9f9;
 }
 
 .nav ul {
   display: flex;
+  flex-direction: row;
+  gap: 2em;
   list-style: none;
   padding: 0;
-  gap: 10px;
-  margin-bottom: 20px;
+  margin: 0;
 }
 
-.nav li {
-  padding: 10px 20px;
-  background-color: #ccc;
-  border-radius: 6px;
+.nav ul li {
   cursor: pointer;
-  font-weight: bold;
+  padding: 8px 12px;
+  border-radius: 7px;
+  transition: background 0.2s ease;
+  margin: 0;
+  align-items: center;
 }
 
-.ativo {
-  background-color: white;
-  border: 2px solid #999;
+.nav ul li:hover {
+  font-size: 18px;
+
 }
+
+.nav ul li.ativo {
+  font-size: 20px;
+  color: var(--preto);
+  font-weight: bold;
+  margin-top: -4px;
+}
+
+
+.nav button {
+  padding: 0.8em 1.5em;
+  border: none;
+  border-radius: 7px;
+  background-color: #ffbf00;
+  color: var(--preto);
+  cursor: pointer;
+  font-size: 1em;
+  font-weight: bold;
+  transition: background-color 0.2s ease;
+}
+
+.nav button:hover {
+  background-color: #ebb000;
+}
+
 
 .conteudo {
   background-color: #eaeaea;
   padding: 20px;
   border-radius: 8px;
 }
+
+

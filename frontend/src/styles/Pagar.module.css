@@ -1,39 +1,61 @@
 .pagarContainer {
-  padding: 1rem;
-  background: #eee;
+  padding: 24px 32px;
+  background-color: #f0f0f0;
+  min-height: 100vh;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: column;
 }
 
-.header {
-  display: flex;
-  justify-content: space-between;
+
+
+.heroTitle h2 {
+  font-size: 1.3rem;
+  font-weight: bold;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.heroTitle {
+  background-color: var(--cinza-medio);
+  width: 100%;
+  border-radius: 7px;
+  margin-bottom: 1em;
+  justify-content: center;
   align-items: center;
 }
 
-.botaoPago {
-  background-color: #4CAF50;
-  color: white;
-  font-weight: bold;
-  border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-}
-
-.card {
-  background-color: white;
-  padding: 1rem;
-  border-radius: 10px;
-  margin-top: 1rem;
-}
-
-.linha {
+.cards {
   display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 3px;
+  align-items: center;
+  width: 100%;
 }
 
-.observacao {
-  font-size: 0.75rem;
-  color: #666;
-  margin-top: 0.5rem;
+
+.semPlacas {
+  font-style: italic;
+  color: #777;
+  margin-top: 20px;
+}
+
+.botaoPagar {
+  background-color: #1ca0ac;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  font-weight: bold;
+  font-size: 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: -50px;
+  margin-right: 15px;
+  float: right;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.botaoPagar:hover {
+  background-color: #016068;
 }

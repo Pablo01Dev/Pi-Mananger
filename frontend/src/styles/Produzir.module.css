@@ -5,17 +5,21 @@
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+
 }
 
 .gridCategorias {
-  display: flex; /* <-- Aqui está o segredo */
+  display: flex;
+  /* <-- Aqui está o segredo */
   justify-content: space-between;
   gap: 1rem;
   width: 100%;
 }
 
+
 .colunaCategoria {
-  flex: 1; /* cada coluna ocupa o mesmo espaço */
+  flex: 1;
+  /* cada coluna ocupa o mesmo espaço */
   background-color: #f0f0f0;
   border-radius: 8px;
   padding: 1rem;
@@ -24,7 +28,7 @@
   align-items: stretch;
 }
 
-.botaoCategoria {
+.categoria {
   background-color: #ccc;
   color: #000;
   border: none;
@@ -34,6 +38,8 @@
   margin-bottom: 1rem;
   text-align: center;
   cursor: default;
+  font-family: roboto;
+  font-size: 18px;
 }
 
 .cards {

@@ -52,9 +52,10 @@ export default function Produzir() {
 
           return (
             <div key={categoria} className={styles.colunaCategoria}>
-              <button className={styles.botaoCategoria} disabled>
+              <div className={styles.categoria}>
                 {categoria}
-              </button>
+              </div>
+
               <div className={styles.cards}>
                 {placasFiltradas.length > 0 ? (
                   placasFiltradas.map(placa => (

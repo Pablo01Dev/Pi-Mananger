@@ -1,4 +1,5 @@
 import styles from '../../styles/CardPlaca.module.css';
+import { MdDelete } from "react-icons/md"
 
 export default function CardPlaca({ placa, onEnviar, onDelete }) {
   const handleEnviar = async () => {
@@ -23,7 +24,17 @@ export default function CardPlaca({ placa, onEnviar, onDelete }) {
 
   return (
     <div className={styles.cardPlaca}>
-      <div>
+
+      <div className={styles.delete}>
+        <button
+          type="button"
+          onClick={handleDelete}
+          aria-label="Excluir placa"
+        >
+          <MdDelete />
+        </button>
+      </div>
+      <div className={styles.content}>
         <h1>{placa.titulo}</h1>
         <h3>Largura: {placa.largura}m</h3>
         <h3>Altura: {placa.altura}m</h3>
@@ -31,16 +42,8 @@ export default function CardPlaca({ placa, onEnviar, onDelete }) {
         {placa.observacao && <h4>Obs: {placa.observacao}</h4>}
       </div>
       <div className={styles.actions}>
-        <button type="button" onClick={handleEnviar} aria-label="Enviar placa">
+        <button className={styles.botaoEnviar}type="button" onClick={handleEnviar} aria-label="Enviar placa">
           Enviar
-        </button>
-        <button
-          type="button"
-          onClick={handleDelete}
-          className={styles.delete}
-          aria-label="Excluir placa"
-        >
-          Excluir
         </button>
       </div>
     </div>
