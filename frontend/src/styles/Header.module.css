@@ -1,6 +1,6 @@
 .header {
   background: #eee;
-  padding: .5rem 4em ;
+  padding: .1rem 4em;
   border-bottom: 1px solid #ccc;
   display: flex;
   justify-content: space-between; /* Espaço entre os filhos */
@@ -29,3 +29,11 @@
   gap: 2em;
   margin: 0; /* Removi o margin: auto para o alinhamento correto */
 }
+
+.header nav ul li a {
+  text-decoration: none;
+  color: var(--preto);
+  font-weight: 500;
+  font-family: Roboto;
+}
+

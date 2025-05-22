@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import axios from 'axios';
-import styles from '../../styles/ModalImovel.module.css';
+import styles from '../../styles/ModalNovo.module.css';
 import { MdDelete } from "react-icons/md"
 import { MdOutlineClose } from "react-icons/md";
 

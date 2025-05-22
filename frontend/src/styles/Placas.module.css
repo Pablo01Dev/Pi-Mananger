@@ -2,6 +2,18 @@
   background-color: #f4f4f4;
 }
 
+.novoButton button{ 
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 0;
+  height: 2.5em;
+  width: 10em;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+
+
 .nav {
   display: flex;
   flex-direction: row;

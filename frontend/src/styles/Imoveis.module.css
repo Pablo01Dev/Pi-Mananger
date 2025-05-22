@@ -86,8 +86,8 @@ body {
   flex-direction: row;
   align-items: center;
   padding: 0;
-  height: 3em;
-  width: 11em;
+  height: 2.5em;
+  width: 10em;
   justify-content: space-between;
   box-sizing: border-box;
 }

@@ -8,10 +8,8 @@ export default function Header() {
       </div>
       <nav>
         <ul>
-          <li>imóveis</li>
-          <li>Placas</li>
-          <li>Marketing</li>
-          <li>Formulários</li>
+          <li><a href="/imoveis">Imoveis</a></li>
+          <li><a href="/placas">Placas</a></li>
         </ul>
       </nav>
     </header>

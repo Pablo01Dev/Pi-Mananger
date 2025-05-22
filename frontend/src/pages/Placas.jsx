@@ -6,9 +6,11 @@ import Pagar from '../../src/components/Placas/Pagar';
 import Pago from '../../src/components/Placas/Pago';
 import Disponiveis from '../../src/components/Placas/Disponiveis';
 import Usadas from '../../src/components/Placas/Usadas';
+import NovaPlaca from '../../src/components/Placas/NovaPlaca'; 
 
 export default function Placas() {
   const [abaSelecionada, setAbaSelecionada] = useState('produzir');
+  const [mostrarModal, setMostrarModal] = useState(false); 
 
   const renderizarComponente = () => {
     switch (abaSelecionada) {
@@ -25,6 +27,11 @@ export default function Placas() {
       default:
         return null;
     }
+  };
+
+  const handleCriarPlaca = () => {
+    // você pode fazer algo quando a placa for criada, ex: recarregar lista
+    console.log('Placa criada!');
   };
 
   return (
@@ -62,11 +69,24 @@ export default function Placas() {
             Usadas
           </li>
         </ul>
+        <div className={styles.novoButton}>
+          <button type="button" onClick={() => setMostrarModal(true)}>
+            <h4 className={styles.novo}>Nova placa</h4>
+            <p className={styles.mais}>+</p>
+          </button>
+        </div>
       </nav>
 
       <div className={styles.conteudo}>
         {renderizarComponente()}
       </div>
+
+      {mostrarModal && (
+        <NovaPlaca
+          onClose={() => setMostrarModal(false)}
+          onCriar={handleCriarPlaca}
+        />
+      )}
     </div>
   );
 }
