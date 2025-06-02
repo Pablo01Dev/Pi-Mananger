@@ -12,15 +12,14 @@ import {
 
 const router = express.Router();
 
+router.get('/ultimo', buscarUltimoImovel);
 router.get('/', listarImoveis);
 router.post('/', criarImovel);
 router.patch('/:id/status', atualizarStatus);
 router.patch('/:id/video', atualizarVideo);
-router.delete('/:id', deletarImovel);
 router.put('/:id', atualizarImovel);
 router.put('/ordem', atualizarOrdem);
-
-// Rota para buscar o último imóvel
-router.get('/ultimo', buscarUltimoImovel);
+router.delete('/:id', deletarImovel);
 
 export default router;
+

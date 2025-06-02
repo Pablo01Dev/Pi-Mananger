@@ -12,61 +12,67 @@ export default function ModalNovoImovel({ onClose, onCriar }) {
   const [videos, setVideos] = useState([]);
   const [isLoading, setIsLoading] = useState(false);  // Controle de estado de carregamento
 
-const handleCreate = async () => {
-  setIsLoading(true);  // Inicia o carregamento
+  const handleCreate = async () => {
+    if (!titulo.trim()) {
+      alert('O campo título é obrigatório.');
+      return;
+    }
 
-  try {
-    // Criação do imóvel
-    const response = await axios.post('http://localhost:5000/api/imoveis', {
-      titulo,
-      descricao,
-      status,
-    });
+    setIsLoading(true);
 
-    const novoImovel = response.data;
+    try {
+      console.log({ titulo, descricao, status });
+      const response = await axios.post('http://localhost:5000/api/imoveis', {
+        titulo,
+        descricao,
+        status,
+      });
 
-    // Função para upload de imagens
-    const uploadImagens = async () => {
-      for (const img of arquivos) {
-        const formDataImg = new FormData();
-        formDataImg.append('arquivo', img);
-        await axios.post(
-          `http://localhost:5000/api/upload/${novoImovel._id}/imagens`,
-          formDataImg,
-          { headers: { 'Content-Type': 'multipart/form-data' } }
-        );
-      }
-    };
+      const novoImovel = response.data;
 
-    // Função para upload de vídeos
-    const uploadVideos = async () => {
-      for (const vid of videos) {
-        const formDataVid = new FormData();
-        formDataVid.append('arquivo', vid);
-        await axios.post(
-          `http://localhost:5000/api/upload/${novoImovel._id}/videos`,
-          formDataVid,
-          { headers: { 'Content-Type': 'multipart/form-data' } }
-        );
-      }
-    };
+      // Função para upload de imagens
+      const uploadImagens = async () => {
+        for (const img of arquivos) {
+          const formDataImg = new FormData();
+          formDataImg.append('arquivo', img);
+          await axios.post(
+            `http://localhost:5000/api/imoveis/${novoImovel._id}/upload`,
+            formDataImg, // ou formDataVid
+            { headers: { 'Content-Type': 'multipart/form-data' } }
+          );
+        }
+      };
 
-    // Executa os uploads de forma controlada
-    await uploadImagens();
-    await uploadVideos();
+      // Função para upload de vídeos
+      const uploadVideos = async () => {
+        for (const vid of videos) {
+          const formDataVid = new FormData();
+          formDataVid.append('arquivo', vid);
+          await axios.post(
+            `http://localhost:5000/api/imoveis/${novoImovel._id}/upload`,
+            formDataVid, // ✅ Corrigido
+            { headers: { 'Content-Type': 'multipart/form-data' } }
+          );
 
-    alert('Imóvel criado com sucesso!');
-    onCriar(); // Chama a função passada via prop
+        }
+      };
 
-    onClose(); // Fecha o modal
+      // Executa os uploads de forma controlada
+      await uploadImagens();
+      await uploadVideos();
 
-  } catch (err) {
-    console.error('Erro ao criar imóvel:', err.response?.data || err.message);
-    alert('Erro ao criar imóvel.');
-  } finally {
-    setIsLoading(false);  // Finaliza o carregamento
-  }
-};
+      alert('Imóvel criado com sucesso!');
+      onCriar(); // Chama a função passada via prop
+
+      onClose(); // Fecha o modal
+
+    } catch (err) {
+      console.error('Erro ao criar imóvel:', err.response?.data || err.message);
+      alert('Erro ao criar imóvel.');
+    } finally {
+      setIsLoading(false);  // Finaliza o carregamento
+    }
+  };
 
 
   return (
@@ -153,8 +159,8 @@ const handleCreate = async () => {
           </label>
 
           <div className={styles.footerButtons}>
-            <button 
-              className={styles.saveButton} 
+            <button
+              className={styles.saveButton}
               onClick={handleCreate}
               disabled={isLoading}  // Desabilita o botão durante o carregamento
             >

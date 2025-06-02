@@ -1,84 +1,86 @@
-import fs from 'fs-extra';
-import path from 'path';
 import Imovel from '../models/Imovel.js';
-const ROOT_UPLOAD_DIR = path.resolve('uploads/imoveis');
+import dropbox from '../config/dropboxClient.js';
 
+
+import { Readable } from 'stream';
+
+// Função para criar imóvel
 // Função para criar imóvel
 export const criarImovel = async (req, res) => {
   try {
-    // Define ordem automaticamente (última ordem + 1)
-    const ultimoImovel = await Imovel.findOne().sort('-ordem');
-    const novaOrdem = ultimoImovel ? ultimoImovel.ordem + 1 : 1;
+    // ... código anterior
 
-    // Cria o novo imóvel com ordem definida
-    const novoImovel = await Imovel.create({
-      ...req.body,
-      ordem: novaOrdem,
+    const idImovel = String(novoImovel._id);
+
+    // Criar o arquivo .keep na pasta raiz do imóvel para garantir que ela exista
+    const caminhoRaiz = `/imoveis/${idImovel}/.keep`;
+    await dropbox.filesUpload({
+      path: caminhoRaiz,
+      contents: Buffer.from(''),
+      mode: { '.tag': 'overwrite' }
     });
+    console.log(`[DEBUG] Pasta raiz criada no Dropbox: ${caminhoRaiz}`);
 
-    // Cria pastas físicas
-    const pastaImovel = path.join(ROOT_UPLOAD_DIR, String(novoImovel._id));
+    // Criar subpastas com .keep
     const subpastas = ['videos', 'imagens', 'documentos'];
-
     for (const subpasta of subpastas) {
-      await fs.ensureDir(path.join(pastaImovel, subpasta));
+      const caminhoDropbox = `/imoveis/${idImovel}/${subpasta}/.keep`;
+      const respostaDropbox = await dropbox.filesUpload({
+        path: caminhoDropbox,
+        contents: Buffer.from(''),
+        mode: { '.tag': 'overwrite' }
+      });
+      console.log(`[DEBUG] Subpasta criada no Dropbox: ${caminhoDropbox}`, respostaDropbox);
     }
 
-    res.status(201).json(novoImovel);
+    // ... restante do código
   } catch (err) {
-    console.error(err);
-    res.status(400).json({ erro: 'Erro ao criar imóvel: ' + err.message });
+    // ... tratamento de erro
   }
 };
 
 
-// Função para atualizar o status do imóvel
+
+// Atualizar status do imóvel
 export const atualizarStatus = async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
 
-  console.log(`Atualizando status do imóvel ${id} para: ${status}`);  // Log do status recebido
-
-  // Verificar se o status enviado é válido
   if (!['cadastrar', 'fazer video', 'fazer tour 360º', 'concluído'].includes(status)) {
     return res.status(400).json({ erro: 'Status inválido enviado.' });
   }
 
   try {
     const imovel = await Imovel.findById(id);
-    if (!imovel) {
-      return res.status(404).json({ erro: 'Imóvel não encontrado.' });
-    }
+    if (!imovel) return res.status(404).json({ erro: 'Imóvel não encontrado.' });
 
-    imovel.status = status;  // Atualiza o status conforme necessário
+    imovel.status = status;
     await imovel.save();
 
     res.status(200).json({ sucesso: true, imovel });
   } catch (err) {
-    console.error(err);  // Log detalhado de erro no servidor
+    console.error(err);
     res.status(500).json({ erro: 'Erro ao atualizar o status do imóvel: ' + err.message });
   }
 };
 
-// Função para listar os imóveis
+// Listar imóveis
 export const listarImoveis = async (req, res) => {
   try {
-    // Ordena os imóveis pela propriedade 'ordem'
-    const imoveis = await Imovel.find().sort({ ordem: 1 });  // 1 significa ordem crescente
+    const imoveis = await Imovel.find().sort({ ordem: 1 });
 
     if (!imoveis || imoveis.length === 0) {
       return res.status(404).json({ erro: 'Nenhum imóvel encontrado.' });
     }
 
-    res.status(200).json(imoveis);  // Retorna a lista de imóveis ordenados
+    res.status(200).json(imoveis);
   } catch (err) {
     console.error(err);
     res.status(500).json({ erro: 'Erro ao listar imóveis: ' + err.message });
   }
 };
 
-
-// Função para atualizar o vídeo do imóvel
+// Atualizar vídeo usando Dropbox
 export const atualizarVideo = async (req, res) => {
   const { id } = req.params;
 
@@ -86,12 +88,9 @@ export const atualizarVideo = async (req, res) => {
     return res.status(400).json({ erro: 'Nenhum vídeo enviado.' });
   }
 
-  // Verificando se o arquivo enviado é um vídeo
   if (req.file.mimetype !== 'video/mp4') {
     return res.status(400).json({ erro: 'Tipo de arquivo não permitido. Apenas vídeos (MP4) são aceitos.' });
   }
-
-  const caminho = `/uploads/imoveis/${id}/videos/${req.file.filename}`;
 
   try {
     const imovel = await Imovel.findById(id);
@@ -99,54 +98,84 @@ export const atualizarVideo = async (req, res) => {
       return res.status(404).json({ erro: 'Imóvel não encontrado.' });
     }
 
-    // Atualizando o vídeo do imóvel
-    imovel.video = { ...imovel.video, link: caminho };
+    const dropboxPath = `/imoveis/${id}/videos/${req.file.originalname}`;
 
+    // Upload para o Dropbox
+    await dropbox.filesUpload({
+      path: dropboxPath,
+      contents: req.file.buffer,
+      mode: { '.tag': 'overwrite' }
+    });
+
+    // Gerar link compartilhável
+    const sharedLink = await dropbox.sharingCreateSharedLinkWithSettings({ path: dropboxPath });
+
+    // Atualizar imóvel com link do vídeo
+    imovel.video = { ...imovel.video, link: sharedLink.url.replace('?dl=0', '?raw=1') };
     await imovel.save();
 
-    res.status(200).json({ sucesso: true, caminho });
+    res.status(200).json({ sucesso: true, link: imovel.video.link });
   } catch (err) {
-    console.error(err);  // Log detalhado de erro no servidor
+    console.error(err);
     res.status(500).json({ erro: 'Erro ao atualizar o vídeo do imóvel: ' + err.message });
   }
 };
 
-// Função para deletar um imóvel
+// Deletar imóvel e arquivos do Dropbox
 export const deletarImovel = async (req, res) => {
   const { id } = req.params;
 
   try {
     const imovel = await Imovel.findById(id);
-    
+
     if (!imovel) {
-      return res.status(200).json({ 
-        success: true // Mudamos para 'success' para padronizar
-      });
+      return res.status(200).json({ success: true });
     }
 
+    // Apaga o imóvel do banco primeiro
     await Imovel.findByIdAndDelete(id);
 
-    const pastaImovel = path.join(ROOT_UPLOAD_DIR, String(id));
-    if (await fs.pathExists(pastaImovel)) {
-      await fs.remove(pastaImovel);
+    const caminhoOriginal = `/imoveis/${id}`;
+    const caminhoFinalizado = `/finalizados/${id}`;
+
+    // Verifica se a pasta existe no Dropbox
+    try {
+      await dropbox.filesGetMetadata({ path: caminhoOriginal });
+    } catch (err) {
+      // Se não existir, já assume sucesso porque imóvel já foi deletado
+      if (err?.error?.error_summary && err.error.error_summary.includes('path/not_found')) {
+        console.warn('[WARN] Pasta de origem não encontrada no Dropbox, assumindo que já foi movida:', caminhoOriginal);
+        return res.status(200).json({ success: true });
+      }
+      console.error('[ERRO] Pasta de origem não encontrada no Dropbox:', caminhoOriginal);
+      return res.status(404).json({ success: false, error: 'Pasta de origem não encontrada no Dropbox' });
     }
 
-    res.status(200).json({ 
-      success: true // Retorna apenas o status, sem mensagem
-    });
+    // Move os arquivos para /finalizados
+    try {
+      await dropbox.filesMoveV2({
+        from_path: caminhoOriginal,
+        to_path: caminhoFinalizado,
+        autorename: true,
+      });
+    } catch (err) {
+      console.error('[ERRO] Falha ao mover arquivos:', err);
+      return res.status(500).json({ success: false, error: 'Erro ao mover arquivos no Dropbox' });
+    }
+
+    res.status(200).json({ success: true });
 
   } catch (err) {
-    console.error('Erro ao deletar imóvel:', err);
-    res.status(500).json({ 
+    console.error('[ERRO] Erro geral ao deletar imóvel:', err);
+    res.status(500).json({
       success: false,
-      error: 'Erro ao remover imóvel' 
+      error: 'Erro ao mover arquivos e remover imóvel'
     });
   }
 };
 
 
-
-
+// Atualizar dados do imóvel
 export const atualizarImovel = async (req, res) => {
   const { id } = req.params;
   const dadosAtualizados = req.body;
@@ -162,12 +191,11 @@ export const atualizarImovel = async (req, res) => {
   }
 };
 
-// Atualiza a ordem dos imóveis
+// Atualizar ordem
 export const atualizarOrdem = async (req, res) => {
-  const { novaOrdem } = req.body;  // A nova ordem dos imóveis
+  const { novaOrdem } = req.body;
 
   try {
-    // Atualiza cada imóvel com a nova ordem (supondo que cada imóvel tenha um campo 'ordem')
     for (let i = 0; i < novaOrdem.length; i++) {
       const imovel = novaOrdem[i];
       await Imovel.findByIdAndUpdate(imovel._id, { ordem: i });
@@ -180,10 +208,10 @@ export const atualizarOrdem = async (req, res) => {
   }
 };
 
+// Buscar último imóvel
 export const buscarUltimoImovel = async (req, res) => {
   try {
-    // Encontra o imóvel com o maior valor de 'ordem'
-    const ultimoImovel = await Imovel.findOne().sort({ ordem: -1 }); // Ordena de forma decrescente
+    const ultimoImovel = await Imovel.findOne().sort({ ordem: -1 });
     if (!ultimoImovel) {
       return res.status(404).json({ message: 'Nenhum imóvel encontrado' });
     }
@@ -193,4 +221,3 @@ export const buscarUltimoImovel = async (req, res) => {
     res.status(500).json({ message: 'Erro ao buscar o último imóvel' });
   }
 };
-

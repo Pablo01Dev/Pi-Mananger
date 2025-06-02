@@ -1,37 +1,88 @@
 import { useState } from 'react';
 import axios from 'axios';
-import styles from '../../styles/ModalNovo.module.css'; // reutilizando seu CSS
+import styles from '../../styles/ModalNovo.module.css';
 import { MdOutlineClose } from 'react-icons/md';
 
-export default function NovaPlaca({ onClose, onCriar }) {
-  const [titulo, setTitulo] = useState('');
-  const [largura, setLargura] = useState('');
-  const [altura, setAltura] = useState('');
-  const [material, setMaterial] = useState('Lona');
-  const [tipo, setTipo] = useState('Alugue');
-  const [observacao, setObservacao] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+const API_URL = 'http://localhost:5000/api/placas';
 
-  const handleCreate = async () => {
+const MATERIAL_OPTIONS = [
+  { value: 'Lona', label: 'Lona' },
+  { value: 'Adesivo', label: 'Adesivo' }
+];
+
+const TIPO_OPTIONS = [
+  { value: 'Alugue', label: 'Alugue' },
+  { value: 'compre', label: 'Compre' },
+  { value: 'Ambos', label: 'Alugue / Compre' },
+  { value: 'Outro', label: 'Outro' },
+];
+
+export default function NovaPlaca({ onClose, onCriar }) {
+  const [formData, setFormData] = useState({
+    titulo: '',
+    largura: '',
+    altura: '',
+    material: MATERIAL_OPTIONS[0]?.value || 'Lona',
+    tipo: TIPO_OPTIONS[0]?.value || 'Alugue',
+    quantidade: '',
+    observacao: '',
+  });
+  const [isLoading, setIsLoading] = useState(false);
+  const [errors, setErrors] = useState({});
+  const [feedbackMessage, setFeedbackMessage] = useState({ type: '', text: '' });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prevData => ({
+      ...prevData,
+      [name]: value,
+    }));
+    if (errors[name]) {
+      setErrors(prevErrors => ({ ...prevErrors, [name]: null }));
+    }
+    setFeedbackMessage({ type: '', text: '' });
+  };
+
+  const validate = () => {
+    let tempErrors = {};
+    if (!formData.titulo.trim()) tempErrors.titulo = "Título é obrigatório.";
+    if (!formData.largura || isNaN(parseFloat(formData.largura)) || parseFloat(formData.largura) <= 0) {
+      tempErrors.largura = "Largura deve ser um número positivo.";
+    }
+    if (!formData.altura || isNaN(parseFloat(formData.altura)) || parseFloat(formData.altura) <= 0) {
+      tempErrors.altura = "Altura deve ser um número positivo.";
+    }
+    setErrors(tempErrors);
+    return Object.keys(tempErrors).length === 0;
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setFeedbackMessage({ type: '', text: '' });
+
+    if (!validate()) {
+      return;
+    }
+
     setIsLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:5000/api/placas', {
-        titulo,
-        largura: parseFloat(largura),
-        altura: parseFloat(altura),
-        material,
-        tipo,
-        observacao,
+      const payload = {
+        ...formData,
+        largura: parseFloat(formData.largura),
+        altura: parseFloat(formData.altura),
         status: 'produzir',
-      });
+      };
+      await axios.post(API_URL, payload);
 
-      alert('Material criado com sucesso!');
-      onCriar(); // callback externo
-      onClose(); // fecha modal
+      setFeedbackMessage({ type: 'success', text: 'Material criado com sucesso!' });
+      onCriar();
+      onClose();
+
     } catch (err) {
+      const errorMsg = err.response?.data?.message || err.response?.data || err.message || 'Erro desconhecido ao criar material.';
       console.error('Erro ao criar material:', err.response?.data || err.message);
-      alert('Erro ao criar material.');
+      setFeedbackMessage({ type: 'error', text: `Erro ao criar material: ${errorMsg}` });
     } finally {
       setIsLoading(false);
     }
@@ -41,50 +92,94 @@ export default function NovaPlaca({ onClose, onCriar }) {
     <div className={`${styles.modal} ${styles.novoImovel}`}>
       <div className={styles.modalContent}>
         <div className={styles.topButtons}>
-          <button className={styles.closeButton} onClick={onClose}>
+          <button className={styles.closeButton} onClick={onClose} aria-label="Fechar modal">
             <MdOutlineClose />
           </button>
         </div>
 
-        <div className={styles.body}>
+        <form onSubmit={handleSubmit} className={styles.body}>
           <h2>Novo Material</h2>
 
-          <label>Título</label>
-          <input type="text" value={titulo} onChange={e => setTitulo(e.target.value)} />
+          {feedbackMessage.text && (
+            <div className={feedbackMessage.type === 'error' ? styles.errorMessage : styles.successMessage}>
+              {feedbackMessage.text}
+            </div>
+          )}
 
-          <label>Largura (cm)</label>
-          <input type="number" value={largura} onChange={e => setLargura(e.target.value)} />
+          <label htmlFor="tituloInput">Título</label>
+          <input
+            id="tituloInput"
+            type="text"
+            name="titulo"
+            value={formData.titulo}
+            onChange={handleChange}
+          />
+          {errors.titulo && <span className={styles.errorText}>{errors.titulo}</span>}
 
-          <label>Altura (cm)</label>
-          <input type="number" value={altura} onChange={e => setAltura(e.target.value)} />
+          <label htmlFor="larguraInput">Largura (cm)</label>
+          <input
+            id="larguraInput"
+            type="number"
+            name="largura"
+            value={formData.largura}
+            onChange={handleChange}
+            step="any"
+          />
+          {errors.largura && <span className={styles.errorText}>{errors.largura}</span>}
 
-          <label>Material</label>
-          <select value={material} onChange={e => setMaterial(e.target.value)}>
-            <option value="Lona">Lona</option>
-            <option value="Adesivo">Adesivo</option>
+          <label htmlFor="alturaInput">Altura (cm)</label>
+          <input
+            id="alturaInput"
+            type="number"
+            name="altura"
+            value={formData.altura}
+            onChange={handleChange}
+            step="any"
+          />
+          {errors.altura && <span className={styles.errorText}>{errors.altura}</span>}
+
+          <label htmlFor="materialInput">Material</label>
+          <select id="materialInput" name="material" value={formData.material} onChange={handleChange}>
+            {MATERIAL_OPTIONS.map(option => (
+              <option key={option.value} value={option.value}>{option.label}</option>
+            ))}
           </select>
 
-          <label>Tipo</label>
-          <select value={tipo} onChange={e => setTipo(e.target.value)}>
-            <option value="Alugue">Alugue</option>
-            <option value="Compre">Compre</option>
-            <option value="Alugue ou compre">Alugue ou compre</option>
-            <option value="Outros">Outros</option>
+          <label htmlFor="tipoInput">Tipo</label>
+          <select id="tipoInput" name="tipo" value={formData.tipo} onChange={handleChange}>
+            {TIPO_OPTIONS.map(option => (
+              <option key={option.value} value={option.value}>{option.label}</option>
+            ))}
           </select>
+          <label htmlFor="quantidadeInput">Quantidade</label>
+          <input
+            id="quantidadeInput"
+            type="number"
+            name="quantidade"
+            value={formData.quantidade}
+            onChange={handleChange}
+            step="1"
+          />
+          {errors.quantidade && <span className={styles.errorText}>{errors.quantidade}</span>}
 
-          <label>Observação</label>
-          <textarea value={observacao} onChange={e => setObservacao(e.target.value)} />
+          <label htmlFor="observacaoInput">Observação</label>
+          <textarea
+            id="observacaoInput"
+            name="observacao"
+            value={formData.observacao}
+            onChange={handleChange}
+          />
 
           <div className={styles.footerButtons}>
-            <button 
-              className={styles.saveButton} 
-              onClick={handleCreate}
+            <button
+              type="submit"
+              className={styles.saveButton}
               disabled={isLoading}
             >
               {isLoading ? 'Criando...' : 'Criar Material'}
             </button>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   );
