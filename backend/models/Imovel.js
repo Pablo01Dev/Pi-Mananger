@@ -10,19 +10,20 @@ const imovelSchema = new mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ['cadastrar', 'fazer tour 360º', 'fazer video', 'concluído'],
+        enum: ['cadastrar', 'fazer tour 360º', 'fazer video', 'concluído', 'disponivel'], // <-- ADICIONADO 'disponivel' AQUI
         default: 'cadastrar'
     },
 
     imagens: [
         {
-            path: String,
-            filename: String
+            nome: String,
+            filename: String,
+            link: String
         }],
 
     video: {
-        path: String,
-        filename: String
+        nome: String,
+        link: String // <-- Adicionado o campo 'link' para o vídeo também, é necessário para o fix-on-read
     },
 
     criadoEm: {
@@ -33,8 +34,7 @@ const imovelSchema = new mongoose.Schema({
     ordem: {
         type: Number,
         default: 0
-
-}
+    }
 
 });
 

@@ -1,65 +1,95 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react'; // Importar useEffect
 import axios from 'axios';
 import styles from '../../styles/ModalNovo.module.css';
 import { MdDelete } from "react-icons/md"
 import { MdOutlineClose } from "react-icons/md";
 
 export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcluir }) {
+    // Adicionar um useEffect para depurar os dados recebidos na prop imovel
+    useEffect(() => {
+        console.log("------------------------------------------");
+        console.log("ModalEditarImovel: Imóvel recebido:", imovel);
+        console.log("ModalEditarImovel: Imagens existentes (imovel.imagens):", imovel.imagens);
+        if (imovel.imagens && imovel.imagens.length > 0) {
+            imovel.imagens.forEach((img, index) => {
+                console.log(`Imagem ${index + 1}: filename=${img.filename}, link=${img.link}`);
+                if (!img.link) {
+                    console.error(`AVISO: Imagem ${img.filename || index} não tem um 'link' definido!`);
+                }
+            });
+        }
+        console.log("------------------------------------------");
+    }, [imovel]); // Executa uma vez quando o componente monta e quando a prop 'imovel' muda
+
     const [titulo, setTitulo] = useState(imovel.titulo);
     const [descricao, setDescricao] = useState(imovel.descricao);
     const [status, setStatus] = useState(imovel.status);
-    const [arquivos, setArquivos] = useState([]);
-    const [videos, setVideos] = useState([]);
+    const [novasImagensParaUpload, setNovasImagensParaUpload] = useState([]); // Arquivos de imagem selecionados para upload
+    const [videosParaUpload, setVideosParaUpload] = useState([]); // Arquivos de vídeo selecionados para upload
     const [showCarousel, setShowCarousel] = useState(false);
-    const [imagens, setImagens] = useState(imovel.imagens || []);
-    const [imagensParaExcluir, setImagensParaExcluir] = useState([]);
-    const [confirmandoExclusao, setConfirmandoExclusao] = useState(false);
+    const [imagensExistentes, setImagensExistentes] = useState(imovel.imagens || []); // Imagens já salvas no imóvel
+    const [imagensParaExcluir, setImagensParaExcluir] = useState([]); // Nomes de arquivo das imagens a serem excluídas
     const [mostrarConfirmacao, setMostrarConfirmacao] = useState(false);
     const [isDeleting, setIsDeleting] = useState(false);
-
+    const [currentCarouselIndex, setCurrentCarouselIndex] = useState(0); // Para o carrossel
 
     const handleUpdate = async () => {
         try {
+            // 1. Atualizar campos básicos do imóvel (título, descrição, status)
             await axios.put(`http://localhost:5000/api/imoveis/${imovel._id}`, {
                 titulo,
                 descricao,
                 status,
             });
 
-            for (const img of arquivos) {
+            // 2. Upload de novas imagens
+            if (novasImagensParaUpload.length > 0) {
                 const formDataImg = new FormData();
-                formDataImg.append('arquivo', img);
+                // O nome 'arquivos' deve corresponder ao que você definiu no Multer (upload.array('arquivos'))
+                novasImagensParaUpload.forEach(file => {
+                    formDataImg.append('arquivos', file);
+                });
+
                 const response = await axios.post(
-                    `http://localhost:5000/api/upload/${imovel._id}/imagens`,
+                    `http://localhost:5000/api/imoveis/${imovel._id}/imagens`,
                     formDataImg,
                     { headers: { 'Content-Type': 'multipart/form-data' } }
                 );
-                setImagens(prev => [...prev, ...response.data.imagens]);
+                // Adiciona as novas imagens retornadas pelo backend ao estado de imagens existentes
+                // É CRÍTICO que response.data.imagens contenha os objetos de imagem com 'link' válido
+                setImagensExistentes(prev => [...prev, ...response.data.imagens]);
             }
 
-            for (const vid of videos) {
+            // 3. Upload de novos vídeos
+            if (videosParaUpload.length > 0) {
                 const formDataVid = new FormData();
-                formDataVid.append('arquivo', vid);
+                formDataVid.append('arquivo', videosParaUpload[0]); // Apenas o primeiro vídeo, se múltiplo não for suportado
                 await axios.post(
-                    `http://localhost:5000/api/upload/${imovel._id}/videos`,
+                    `http://localhost:5000/api/imoveis/${imovel._id}/videos`,
                     formDataVid,
                     { headers: { 'Content-Type': 'multipart/form-data' } }
                 );
+                // Nota: O backend retorna o link do vídeo, você pode querer atualizar o estado do imóvel aqui
+                // Para simplificar, estamos assumindo que o imovel.video será atualizado após o onAtualizar
             }
 
+            // 4. Excluir imagens marcadas para exclusão
             for (const filename of imagensParaExcluir) {
                 try {
-                    await axios.delete(`http://localhost:5000/api/upload/${imovel._id}/${filename}`);
+                    // A rota de exclusão agora inclui o filename
+                    await axios.delete(`http://localhost:5000/api/imoveis/${imovel._id}/imagens/${filename}`);
                 } catch (err) {
                     console.error(`Erro ao excluir ${filename}:`, err.response?.data || err.message);
+                    // Opcional: alertar o usuário sobre a falha de exclusão de uma imagem específica
                 }
             }
 
             alert('Atualização concluída!');
 
+            // Fechar modal e chamar callback de atualização
             setTimeout(() => {
                 onClose();
-                if (onAtualizar) onAtualizar();
+                if (onAtualizar) onAtualizar(); // Recarrega os dados do imóvel principal
             }, 500);
         } catch (err) {
             console.error('Erro ao atualizar imóvel:', err.response ? err.response.data : err.message);
@@ -75,7 +105,6 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcl
             const response = await axios.delete(`http://localhost:5000/api/imoveis/${imovel._id}`);
 
             if (response.status === 200) {
-                // MANTENHA APENAS UM ALERTA AQUI
                 alert('Imóvel excluído com sucesso!');
                 if (onExcluir) onExcluir(imovel._id);
                 setMostrarConfirmacao(false);
@@ -89,14 +118,35 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcl
         }
     };
 
+    // Remove imagem da pré-visualização e marca para exclusão no backend
     const handleDeleteImage = (filename) => {
-        // Remove a imagem da lista visualmente
-        setImagens(prev => prev.filter(img => img.filename !== filename));
-
-        // Adiciona o filename para exclusão no backend
+        // Filtra para remover a imagem do estado local
+        setImagensExistentes(prev => prev.filter(img => img.filename !== filename));
+        // Adiciona o filename à lista de imagens a serem excluídas no backend
         setImagensParaExcluir(prev => [...prev, filename]);
     };
 
+    // Lida com a seleção de novas imagens
+    const handleNewImageChange = (e) => {
+        setNovasImagensParaUpload(Array.from(e.target.files));
+    };
+
+    // Lida com a seleção de novos vídeos
+    const handleVideoChange = (e) => {
+        setVideosParaUpload(Array.from(e.target.files));
+    };
+
+    const nextImage = () => {
+        setCurrentCarouselIndex((prevIndex) =>
+            (prevIndex + 1) % imagensExistentes.length
+        );
+    };
+
+    const prevImage = () => {
+        setCurrentCarouselIndex((prevIndex) =>
+            (prevIndex - 1 + imagensExistentes.length) % imagensExistentes.length
+        );
+    };
 
 
     return (
@@ -122,7 +172,6 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcl
                     </button>
                 </div>
 
-
                 <div className={styles.body}>
                     <h2>Editar Imóvel</h2>
                     <label>Título</label>
@@ -141,41 +190,86 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcl
                 </div>
 
                 <div className={styles.arquivoUpload}>
-                    <label>Imagens</label>
-                    {imagens?.length > 0 && (
-                        <img
-                            src={`http://localhost:5000/${imagens[0].path.replace(/\\/g, '/')}`}
-                            alt="Imagem principal"
-                            className={styles.imagemPreview}
-                            onClick={() => setShowCarousel(true)}
-                        />
+                    {/* Exibição de Imagens Existentes (via Dropbox Link) */}
+                    <label>Imagens Existentes</label>
+                    {imagensExistentes?.length > 0 ? (
+                        <div className={styles.existingImagesContainer}>
+                            {imagensExistentes.map((img, index) => (
+                                // Renderiza a imagem APENAS se houver um link válido
+                                img.link ? (
+                                    <div key={img.filename || index} className={styles.imagemPreviewWrapper}>
+                                        <img
+                                            src={img.link} // AGORA USA O LINK DO DROPBOX!
+                                            // Corrigido: Usar filename ou um texto genérico com o índice
+                                            alt={img.filename ? `Imagem ${img.filename}` : `Imagem existente ${index + 1}`}
+                                            className={styles.imagemPreview}
+                                            onClick={() => {
+                                                setShowCarousel(true);
+                                                setCurrentCarouselIndex(index); // Abre o carrossel na imagem clicada
+                                            }}
+                                        />
+                                        <div className={styles.imagemOverlay}>
+                                            <button
+                                                className={styles.iconeLixeira}
+                                                onClick={() => handleDeleteImage(img.filename)}
+                                                title="Remover imagem existente"
+                                            >
+                                                <MdDelete />
+                                            </button>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    // Mostra um aviso se o link estiver faltando
+                                    <div key={img.filename || index} className={styles.imagemPreviewWrapper}>
+                                        <p className={styles.noImageLink}>Link da imagem '{img.filename || `Imagem ${index + 1}`}' não disponível.</p>
+                                        <div className={styles.imagemOverlay}>
+                                            <button
+                                                className={styles.iconeLixeira}
+                                                onClick={() => handleDeleteImage(img.filename)}
+                                                title="Remover imagem sem link"
+                                            >
+                                                <MdDelete />
+                                            </button>
+                                        </div>
+                                    </div>
+                                )
+                            ))}
+                        </div>
+                    ) : (
+                        <p>Nenhuma imagem existente para este imóvel.</p>
                     )}
 
+
+                    <label>Adicionar Novas Imagens</label>
                     <input
                         type="file"
-                        id="inputImagem"
+                        id="inputNovasImagens"
                         style={{ display: 'none' }}
                         className={styles.inputArquivo}
                         multiple
                         accept="image/*"
-                        onChange={e => setArquivos(Array.from(e.target.files))}
+                        onChange={handleNewImageChange}
                     />
+                    <label htmlFor="inputNovasImagens" className={styles.botaoUpload}>Selecionar Novas Imagens</label>
 
-                    {arquivos.length > 0 && (
+                    {/* Pré-visualização de NOVAS imagens selecionadas ANTES do upload */}
+                    {novasImagensParaUpload.length > 0 && (
                         <div className={styles.previewContainer}>
-                            {arquivos.map((file, index) => (
+                            <h4>Imagens para Upload:</h4>
+                            {novasImagensParaUpload.map((file, index) => (
                                 <div key={index} className={styles.imagemPreviewWrapper}>
                                     <img
                                         src={URL.createObjectURL(file)}
-                                        alt={`preview-${index}`}
+                                        alt={`nova-preview-${index}`} // Este já estava ok
                                         className={styles.imagemPreview}
                                     />
                                     <div className={styles.imagemOverlay}>
                                         <button
                                             className={styles.iconeLixeira}
                                             onClick={() => {
-                                                setArquivos(prev => prev.filter((_, i) => i !== index));
+                                                setNovasImagensParaUpload(prev => prev.filter((_, i) => i !== index));
                                             }}
+                                            title="Remover da seleção"
                                         >
                                             <MdDelete />
                                         </button>
@@ -185,25 +279,33 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcl
                         </div>
                     )}
 
-                    <label htmlFor="inputImagem" className={styles.botaoUpload}>Adicionar imagem</label>
 
-                    <label>Vídeos</label>
-                    {imovel.video?.link && (
-                        <video controls width="250">
-                            <source src={imovel.video.link} type="video/mp4" />
-                        </video>
+                    <label>Vídeo</label>
+                    {imovel.video?.link && ( // Exibe o vídeo existente
+                        <div className={styles.videoPreviewContainer}>
+                            <video controls className={styles.videoPreview}>
+                                <source src={imovel.video.link} type="video/mp4" />
+                                Seu navegador não suporta a tag de vídeo.
+                            </video>
+                            <p>Vídeo atual: {imovel.video.nome || 'Sem nome'}</p>
+                        </div>
                     )}
 
+                    <label>Adicionar/Substituir Vídeo</label>
                     <input
                         type="file"
                         id="inputVideo"
                         style={{ display: 'none' }}
-                        multiple
+                        className={styles.inputArquivo}
                         accept="video/mp4"
-                        onChange={e => setVideos(Array.from(e.target.files))}
+                        onChange={handleVideoChange}
                     />
+                    <label htmlFor="inputVideo" className={styles.botaoUpload}>Selecionar Novo Vídeo (MP4)</label>
 
-                    <label htmlFor="inputVideo" className={styles.botaoUpload}>Adicionar vídeo</label>
+                    {videosParaUpload.length > 0 && (
+                        <p>Vídeo selecionado para upload: {videosParaUpload[0].name}</p>
+                    )}
+
 
                     <div className={styles.footerButtons}>
                         <button className={styles.saveButton} onClick={handleUpdate}>Salvar alterações</button>
@@ -211,32 +313,62 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcl
                 </div>
             </div>
 
-            {showCarousel && (
+            {/* Carrossel de Imagens */}
+            {showCarousel && imagensExistentes.length > 0 && (
                 <div className={styles.carouselOverlay} onClick={() => setShowCarousel(false)}>
                     <div className={styles.carouselTop}>
                         <button className={styles.carouselCloseButton} onClick={() => setShowCarousel(false)}>Fechar</button>
                     </div>
                     <div className={styles.carousel} onClick={(e) => e.stopPropagation()}>
-                        {imagens.map((img, idx) => (
-                            <div key={idx} className={styles.carouselItem}>
-                                <img src={`http://localhost:5000/${img.path.replace(/\\/g, '/')}`} alt={`Imagem ${idx}`} />
-                                <button
-                                    className={styles.imageDeleteButton}
-                                    onClick={() => handleDeleteImage(img.filename)}
-                                >
-                                    Excluir
-                                </button>
-                            </div>
-                        ))}
+                        {imagensExistentes.length > 1 && (
+                            <>
+                                <button className={styles.carouselNavButtonLeft} onClick={prevImage}>❮</button>
+                                <button className={styles.carouselNavButtonRight} onClick={nextImage}>❯</button>
+                            </>
+                        )}
+                        <div className={styles.carouselItem}>
+                            {/* Corrigido: Usar filename ou um texto genérico com o índice */}
+                            {/* Adicionado optional chaining (?.) para prevenir erros se imagensExistentes[currentCarouselIndex] for undefined por um breve momento */}
+                            {imagensExistentes[currentCarouselIndex]?.link ? (
+                                <img
+                                    src={imagensExistentes[currentCarouselIndex].link}
+                                    alt={imagensExistentes[currentCarouselIndex]?.filename || `Imagem do carrossel ${currentCarouselIndex + 1}`}
+                                />
+                            ) : (
+                                <p className={styles.noImageLink}>Link da imagem não disponível no carrossel.</p>
+                            )}
+
+                            <button
+                                className={styles.imageDeleteButton}
+                                onClick={() => {
+                                    // Verifica se a imagem atual existe antes de tentar excluir
+                                    if (imagensExistentes[currentCarouselIndex]?.filename) {
+                                        handleDeleteImage(imagensExistentes[currentCarouselIndex].filename);
+                                        // Se a imagem excluída era a última, redefine o índice ou fecha o carrossel
+                                        if (imagensExistentes.length === 1) {
+                                            setShowCarousel(false);
+                                        } else {
+                                            // Ajusta o índice para a próxima imagem ou para o início se for a última
+                                            setCurrentCarouselIndex(prev =>
+                                                (prev + 1) % (imagensExistentes.length - 1 || 1)
+                                            );
+                                        }
+                                    }
+                                }}
+                            >
+                                Excluir Imagem
+                            </button>
+                        </div>
                     </div>
                 </div>
             )}
+
+            {/* Modal de Confirmação de Exclusão de Imóvel */}
             {mostrarConfirmacao && (
                 <div
                     className={styles.confirmacaoOverlay}
                     onClick={() => {
-                        // Apenas fecha o modal se o usuário clicar fora da caixa de confirmação e não tiver confirmado a exclusão
-                        if (!isDeleting) { // Verifica se a exclusão não está em andamento
+                        if (!isDeleting) {
                             setMostrarConfirmacao(false);
                         }
                     }}
@@ -244,7 +376,6 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcl
                     <div
                         className={styles.confirmacaoModal}
                         onClick={(e) => {
-                            // Impede que o clique no modal (dentro da caixa) feche o modal
                             e.stopPropagation();
                         }}
                     >
@@ -254,14 +385,16 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcl
                                 className={styles.confirmarButton}
                                 onClick={(e) => {
                                     e.stopPropagation();
-                                    handleDeleteImovel(); // Chama a função de exclusão
+                                    handleDeleteImovel();
                                 }}
+                                disabled={isDeleting}
                             >
-                                Sim, excluir
+                                {isDeleting ? 'Excluindo...' : 'Sim, excluir'}
                             </button>
                             <button
                                 className={styles.cancelarButton}
-                                onClick={() => setMostrarConfirmacao(false)} // Fecha o modal no "Cancelar"
+                                onClick={() => setMostrarConfirmacao(false)}
+                                disabled={isDeleting}
                             >
                                 Cancelar
                             </button>
