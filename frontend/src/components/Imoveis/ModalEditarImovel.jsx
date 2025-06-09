@@ -199,8 +199,7 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcl
                                 img.link ? (
                                     <div key={img.filename || index} className={styles.imagemPreviewWrapper}>
                                         <img
-                                            src={img.link} // AGORA USA O LINK DO DROPBOX!
-                                            // Corrigido: Usar filename ou um texto genérico com o índice
+                                            src={img.link.replace('dl=0', 'raw=1')}
                                             alt={img.filename ? `Imagem ${img.filename}` : `Imagem existente ${index + 1}`}
                                             className={styles.imagemPreview}
                                             onClick={() => {
@@ -208,6 +207,7 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcl
                                                 setCurrentCarouselIndex(index); // Abre o carrossel na imagem clicada
                                             }}
                                         />
+
                                         <div className={styles.imagemOverlay}>
                                             <button
                                                 className={styles.iconeLixeira}
