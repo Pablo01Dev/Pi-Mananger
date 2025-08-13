@@ -12,10 +12,11 @@ const MATERIAL_OPTIONS = [
 
 const TIPO_OPTIONS = [
   { value: 'Alugue', label: 'Alugue' },
-  { value: 'compre', label: 'Compre' },
-  { value: 'Ambos', label: 'Alugue / Compre' },
-  { value: 'Outro', label: 'Outro' },
+  { value: 'Compre', label: 'Compre' },  // Corrigido para "Compre" com C maiúsculo
+  { value: 'Alugue ou compre', label: 'Alugue / Compre' },  // Igual ao enum
+  { value: 'Outros', label: 'Outro' },   // Igual ao enum
 ];
+
 
 export default function NovaPlaca({ onClose, onCriar }) {
   const [formData, setFormData] = useState({

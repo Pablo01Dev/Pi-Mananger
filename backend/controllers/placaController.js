@@ -21,31 +21,38 @@ export const listarPlacas = async (req, res) => {
 
 export const enviarPlaca = async (req, res) => {
   try {
-    const { valor } = req.body;  // pegar o valor calculado enviado pelo frontend
-
-    if (valor === undefined) {
-      return res.status(400).json({ error: 'Valor é obrigatório' });
-    }
-
-    const placa = await Placa.findByIdAndUpdate(
-      req.params.id,
-      {
-        status: 'pagar',
-        dataEnvio: new Date(),
-        valor: valor  // salva o valor recebido
-      },
-      { new: true }
-    );
+    const placa = await Placa.findById(req.params.id);
 
     if (!placa) {
       return res.status(404).json({ error: 'Placa não encontrada' });
     }
+
+    const precoPorMetroQuadrado = 35;
+
+    // Cálculo da metragem
+    const larguraMetros = placa.largura / 100;
+    const alturaMetros = placa.altura / 100;
+    const metragem = larguraMetros * alturaMetros;
+
+    // Valor unitário
+    const valorUnitario = metragem * precoPorMetroQuadrado;
+
+    // Valor total = valor unitário * quantidade
+    const valorTotal = valorUnitario * placa.quantidade;
+
+    // Atualiza a placa com o valor calculado e status "pagar"
+    placa.status = 'pagar';
+    placa.dataEnvio = new Date();
+    placa.valor = valorTotal;
+
+    await placa.save();
 
     res.json(placa);
   } catch (err) {
     res.status(400).json({ error: err.message });
   }
 };
+
 
 
 export const atualizarStatus = async (req, res) => {
