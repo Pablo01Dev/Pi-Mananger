@@ -3,7 +3,10 @@ import axios from 'axios';
 import styles from '../../styles/ModalNovo.module.css';
 import { MdOutlineClose } from 'react-icons/md';
 
-const API_URL = 'http://localhost:5000/api/placas';
+const API_URL =
+  import.meta.env.VITE_API_URL
+    ? `${import.meta.env.VITE_API_URL}/placas`
+    : 'http://localhost:5000/api/placas';
 
 const MATERIAL_OPTIONS = [
   { value: 'Lona', label: 'Lona' },

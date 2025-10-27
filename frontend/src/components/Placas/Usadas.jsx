@@ -5,13 +5,19 @@ import styles from '../../styles/Produzir.module.css';
 
 const categorias = ['Alugue', 'Compre', 'Compre e Alugue', 'Outros'];
 
+// 🔧 URL dinâmica: local → localhost, produção → Render
+const API_URL =
+  import.meta.env.VITE_API_URL
+    ? `${import.meta.env.VITE_API_URL}/placas`
+    : 'http://localhost:5000/api/placas';
+
 export default function Usadas() {
   const [placas, setPlacas] = useState([]);
 
   useEffect(() => {
     async function fetchPlacas() {
       try {
-        const res = await axios.get('http://localhost:5000/api/placas');
+        const res = await axios.get(API_URL);
         setPlacas(res.data);
       } catch (error) {
         console.error('Erro ao buscar placas:', error);
@@ -20,12 +26,11 @@ export default function Usadas() {
     fetchPlacas();
   }, []);
 
-  // Função para marcar a placa como "usado"
   const handleUsar = async (id) => {
     try {
-      await axios.put(`http://localhost:5000/api/placas/usar/${id}`);
-      setPlacas(prev =>
-        prev.map(p => p._id === id ? { ...p, status: 'usado' } : p)
+      await axios.put(`${API_URL}/usar/${id}`);
+      setPlacas((prev) =>
+        prev.map((p) => (p._id === id ? { ...p, status: 'usado' } : p))
       );
     } catch (error) {
       console.error('Erro ao usar a placa:', error);
@@ -35,8 +40,8 @@ export default function Usadas() {
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/placas/${id}`);
-      setPlacas(prev => prev.filter(p => p._id !== id));
+      await axios.delete(`${API_URL}/${id}`);
+      setPlacas((prev) => prev.filter((p) => p._id !== id));
     } catch (error) {
       console.error('Erro ao deletar a placa:', error);
       alert('Falha ao deletar a placa.');
@@ -46,27 +51,24 @@ export default function Usadas() {
   return (
     <div className={styles.container}>
       <div className={styles.gridCategorias}>
-        {categorias.map(categoria => {
+        {categorias.map((categoria) => {
           const placasFiltradas = placas.filter(
-            p => p.tipo === categoria && p.status === 'usado'
+            (p) => p.tipo === categoria && p.status === 'usado'
           );
 
           return (
             <div key={categoria} className={styles.colunaCategoria}>
-              <div className={styles.categoria}>
-                {categoria}
-              </div>
+              <div className={styles.categoria}>{categoria}</div>
 
               <div className={styles.cards}>
                 {placasFiltradas.length > 0 ? (
-                  placasFiltradas.map(placa => (
+                  placasFiltradas.map((placa) => (
                     <CardPlaca
                       key={placa._id}
                       placa={placa}
                       onBotaoClick={handleUsar}
                       onDelete={handleDelete}
                     />
-
                   ))
                 ) : (
                   <p className={styles.semPlacas}>—</p>

@@ -3,6 +3,11 @@ import axios from 'axios';
 import CardPlaca from './CardPagamento';
 import styles from '../../styles/Pagar.module.css';
 
+const API_URL =
+  import.meta.env.VITE_API_URL
+    ? `${import.meta.env.VITE_API_URL}/placas`
+    : 'http://localhost:5000/api/placas';
+
 export default function Pagar() {
   const [placas, setPlacas] = useState([]);
   const [selecionadas, setSelecionadas] = useState([]);
@@ -10,9 +15,9 @@ export default function Pagar() {
   useEffect(() => {
     async function fetchPlacas() {
       try {
-        const res = await axios.get('http://localhost:5000/api/placas');
+        const res = await axios.get(API_URL);
         const placasFiltradas = res.data.filter(
-          p => p.status?.toLowerCase() === 'pagar'
+          (p) => p.status?.toLowerCase() === 'pagar'
         );
         setPlacas(placasFiltradas);
       } catch (error) {
@@ -23,17 +28,17 @@ export default function Pagar() {
   }, []);
 
   const handleSelecionar = (id) => {
-    setSelecionadas(prev =>
+    setSelecionadas((prev) =>
       prev.includes(id)
-        ? prev.filter(item => item !== id)
+        ? prev.filter((item) => item !== id)
         : [...prev, id]
     );
   };
 
   const handleDelete = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/placas/${id}`);
-      setPlacas(prev => prev.filter(p => p._id !== id));
+      await axios.delete(`${API_URL}/${id}`);
+      setPlacas((prev) => prev.filter((p) => p._id !== id));
     } catch (error) {
       console.error('Erro ao deletar a placa:', error);
       alert('Falha ao deletar a placa.');
@@ -43,14 +48,12 @@ export default function Pagar() {
   const marcarComoPago = async () => {
     try {
       await Promise.all(
-        selecionadas.map(id =>
-          axios.put(`http://localhost:5000/api/placas/status/${id}`, {
-            status: 'pago'
-          })
+        selecionadas.map((id) =>
+          axios.put(`${API_URL}/status/${id}`, { status: 'pago' })
         )
       );
-      // Atualiza o estado para remover as placas pagas da tela
-      setPlacas(prev => prev.filter(p => !selecionadas.includes(p._id)));
+
+      setPlacas((prev) => prev.filter((p) => !selecionadas.includes(p._id)));
       setSelecionadas([]);
     } catch (error) {
       console.error('Erro ao marcar como pago:', error);
@@ -58,9 +61,7 @@ export default function Pagar() {
     }
   };
 
-
   return (
-
     <div className={styles.pagarContainer}>
       <div className={styles.heroTitle}>
         <h2>Pagamento Pendente</h2>
@@ -72,9 +73,10 @@ export default function Pagar() {
           )}
         </div>
       </div>
+
       <div className={styles.cards}>
         {placas.length > 0 ? (
-          placas.map(placa => (
+          placas.map((placa) => (
             <CardPlaca
               key={placa._id}
               placa={placa}
