@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import api from '../api/api'; // ✅ usa a instância centralizada
 import NovoImovel from '../components/Imoveis/NovoImovel';
 import ListaCards from '../components/Imoveis/ListaCards';
 import styles from '../styles/Imoveis.module.css';
@@ -9,8 +9,9 @@ export default function Imoveis() {
   const [mostrarModal, setMostrarModal] = useState(false);
   const [abaSelecionada, setAbaSelecionada] = useState('cadastrar');
 
+  // ✅ Carrega imóveis do backend Render
   const carregarImoveis = () => {
-    axios.get('http://localhost:5000/api/imoveis')
+    api.get('/imoveis')
       .then(response => {
         console.log('Imóveis carregados:', response.data);
         setImoveis(response.data);
@@ -23,20 +24,21 @@ export default function Imoveis() {
   }, []);
 
   const imoveisFiltrados = imoveis.filter(imovel =>
-    imovel.status.toLowerCase() === abaSelecionada.toLowerCase()
+    imovel.status?.toLowerCase() === abaSelecionada.toLowerCase()
   );
 
   console.log('Imóveis filtrados:', imoveisFiltrados);
 
+  // ✅ Reordena imóveis e atualiza no back
   const handleDragEnd = (result) => {
     if (!result.destination) return;
 
     const filtrados = imoveis.filter(imovel =>
-      imovel.status.toLowerCase() === abaSelecionada.toLowerCase()
+      imovel.status?.toLowerCase() === abaSelecionada.toLowerCase()
     );
 
     const outros = imoveis.filter(imovel =>
-      imovel.status.toLowerCase() !== abaSelecionada.toLowerCase()
+      imovel.status?.toLowerCase() !== abaSelecionada.toLowerCase()
     );
 
     const reordered = Array.from(filtrados);
@@ -48,24 +50,18 @@ export default function Imoveis() {
     });
 
     const novaLista = [...outros, ...reordered];
-
     setImoveis(novaLista);
 
-    axios.put('http://localhost:5000/api/imoveis/ordem', novaLista)
-      .then(response => {
-        console.log('Ordem atualizada com sucesso no back-end!');
-      })
-      .catch(error => {
-        console.error('Erro ao atualizar a ordem:', error);
-      });
+    api.put('/imoveis/ordem', novaLista)
+      .then(() => console.log('Ordem atualizada com sucesso no back-end!'))
+      .catch(error => console.error('Erro ao atualizar a ordem:', error));
   };
 
+  // ✅ Exclui imóvel
   const handleExcluirImovel = async (imovelId) => {
     try {
-      const response = await axios.delete(`http://localhost:5000/api/imoveis/${imovelId}`);
-
+      const response = await api.delete(`/imoveis/${imovelId}`);
       if (response.status === 200) {
-        // REMOVA O ALERTA DAQUI
         setImoveis(imoveis.filter(imovel => imovel._id !== imovelId));
         setMostrarModal(false);
       }
@@ -111,16 +107,20 @@ export default function Imoveis() {
             <p className={styles.mais}>+</p>
           </button>
         </div>
-
       </div>
-      <ListaCards imoveisFiltrados={imoveisFiltrados} handleDragEnd={handleDragEnd} onExcluir={handleExcluirImovel} />
+
+      <ListaCards
+        imoveisFiltrados={imoveisFiltrados}
+        handleDragEnd={handleDragEnd}
+        onExcluir={handleExcluirImovel}
+      />
 
       {mostrarModal && (
         <NovoImovel
           onClose={() => setMostrarModal(false)}
           onCriar={() => {
             setMostrarModal(false);
-            carregarImoveis(); // Refatorado para carregar imóveis após a criação
+            carregarImoveis();
           }}
           onExcluir={handleExcluirImovel}
         />
