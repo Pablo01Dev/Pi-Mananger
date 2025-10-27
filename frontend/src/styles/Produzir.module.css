@@ -53,3 +53,34 @@
   color: #999;
   font-style: italic;
 }
+
+/* 🔻 Responsividade para telas até 700px */
+@media (max-width: 700px) {
+  .container {
+    padding: 0rem;
+    min-height: auto;
+  }
+
+  .gridCategorias {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .colunaCategoria {
+    padding: 0.8rem;
+  }
+
+  .categoria {
+    font-size: 16px;
+    padding: 0.4rem;
+    margin-bottom: 0.8rem;
+  }
+
+  .cards {
+    gap: 0.8rem;
+  }
+
+  .semPlacas {
+    font-size: 14px;
+  }
+}

@@ -134,3 +134,34 @@
     font-size: 14px;
     color: #848484;
 }
+
+
+/* 🔻 Responsividade para telas até 700px */
+@media (max-width: 700px) {
+  .cardImovel {
+    width: 100%;
+    height: auto;
+    padding: 16px;
+    margin: 10px 0;
+  }
+
+  .descriptCard {
+    height: auto;
+    min-height: 80px;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  .statusBar p {
+    font-size: 14px;
+  }
+
+  .date p {
+    font-size: 13px;
+    margin-top: 1em;
+  }
+
+  .media {
+    height: 140px;
+  }
+}
