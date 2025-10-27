@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import api from '../api/api'; // ✅ usa a instância centralizada
+import api from '../api'; // ✅ usa a instância centralizada
 import NovoImovel from '../components/Imoveis/NovoImovel';
 import ListaCards from '../components/Imoveis/ListaCards';
 import styles from '../styles/Imoveis.module.css';

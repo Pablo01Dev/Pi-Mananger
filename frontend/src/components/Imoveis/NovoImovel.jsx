@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import api from '../../api/api'; // ✅ Importa a instância configurada
+import api from '../../api'; // ✅ Importa a instância configurada
 import styles from '../../styles/ModalNovo.module.css';
 import { FiTrash } from 'react-icons/fi';
 import { MdOutlineClose } from "react-icons/md";
