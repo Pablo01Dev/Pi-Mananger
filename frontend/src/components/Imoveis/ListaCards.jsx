@@ -1,19 +1,18 @@
 import React from 'react';
 import CardImovel from './CardImovel';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
-import styles from '../../styles/ListaCards.module.css'; // Crie um arquivo CSS para este componente
+import styles from '../../styles/ListaCards.module.css';
 
-function ListaCards({ imoveisFiltrados, handleDragEnd, onExcluir, onAbrirModal }) {
+export default function ListaCards({ imoveisFiltrados, handleDragEnd, onExcluir, onAtualizar }) {
   return (
     <DragDropContext onDragEnd={handleDragEnd}>
-      <Droppable
-        isCombineEnabled={true}
-        droppableId="droppable"
-        isDropDisabled={false}
-        ignoreContainerClipping={true}
-      >
+      <Droppable droppableId="lista-imoveis">
         {(provided) => (
-          <div className={styles.listaCards} {...provided.droppableProps} ref={provided.innerRef}>
+          <div
+            className={styles.listaCards}
+            {...provided.droppableProps}
+            ref={provided.innerRef}
+          >
             {imoveisFiltrados.map((imovel, index) => (
               <Draggable key={imovel._id} draggableId={imovel._id} index={index}>
                 {(provided) => (
@@ -24,8 +23,8 @@ function ListaCards({ imoveisFiltrados, handleDragEnd, onExcluir, onAbrirModal }
                   >
                     <CardImovel
                       imovel={imovel}
-                      onExcluir={onExcluir} // Passando a função de exclusão para o CardImovel
-                      onAbrirModal={onAbrirModal} // Passando a função para abrir o modal
+                      onAtualizar={onAtualizar}
+                      onExcluir={onExcluir}
                     />
                   </div>
                 )}
@@ -38,5 +37,3 @@ function ListaCards({ imoveisFiltrados, handleDragEnd, onExcluir, onAbrirModal }
     </DragDropContext>
   );
 }
-
-export default ListaCards;
