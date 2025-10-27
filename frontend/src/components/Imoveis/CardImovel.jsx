@@ -2,7 +2,7 @@ import { useState } from 'react';
 import ModalEditarImovel from './ModalEditarImovel';
 import styles from '../../styles/CardImovel.module.css';
 
-const getStatusColor = (status) => {
+const getStatusColor = (status = '') => {
   switch (status.toLowerCase()) {
     case 'cadastrar':
       return '#DD2257';
@@ -13,7 +13,7 @@ const getStatusColor = (status) => {
     case 'concluído':
       return '#54D763';
     default:
-      return 'black';
+      return '#555';
   }
 };
 
@@ -23,10 +23,11 @@ export default function CardImovel({ imovel, onAtualizar, onExcluir }) {
   const formatDate = (dateString) => {
     if (!dateString) return '';
     const date = new Date(dateString);
-    const day = date.getDate().toString().padStart(2, '0');
-    const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    const year = date.getFullYear();
-    return `${day}/${month}/${year}`;
+    return date.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    });
   };
 
   return (
@@ -35,20 +36,23 @@ export default function CardImovel({ imovel, onAtualizar, onExcluir }) {
       onClick={() => setIsModalOpen(true)}
     >
       <div className={styles.statusBar}>
-        <p>{imovel.status}</p>
+        <p className={styles.statusLabel}>{imovel.status || '—'}</p>
         <div
           className={styles.statusColor}
           style={{ backgroundColor: getStatusColor(imovel.status) }}
         />
       </div>
 
-      <h3>{imovel.titulo}</h3>
+      <h3 className={styles.titulo}>{imovel.titulo || 'Sem título'}</h3>
+
       {imovel.descricao && (
         <p className={styles.descriptCard}>{imovel.descricao}</p>
       )}
 
       <div className={styles.date}>
-        {imovel.criadoEm && <p>Criado em: {formatDate(imovel.criadoEm)}</p>}
+        {imovel.criadoEm && (
+          <p>Criado em: {formatDate(imovel.criadoEm)}</p>
+        )}
       </div>
 
       {isModalOpen && (

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import api from '../../api'; // ✅ usa o axios configurado
+import api from '../../api';
 import styles from '../../styles/ModalNovo.module.css';
 import { MdOutlineClose } from "react-icons/md";
 
@@ -16,12 +16,10 @@ export default function ModalNovoImovel({ onClose, onCriar }) {
     }
 
     setIsLoading(true);
-
     try {
       await api.post('/imoveis', { titulo, descricao, status });
-
       alert('Imóvel criado com sucesso!');
-      onCriar();
+      if (onCriar) onCriar();
       onClose();
     } catch (err) {
       console.error('Erro ao criar imóvel:', err.response?.data || err.message);
@@ -34,30 +32,40 @@ export default function ModalNovoImovel({ onClose, onCriar }) {
   return (
     <div className={`${styles.modal} ${styles.novoImovel}`}>
       <div className={styles.modalContent}>
+        {/* Botão de fechar */}
         <div className={styles.topButtons}>
           <button className={styles.closeButton} onClick={onClose}>
             <MdOutlineClose />
           </button>
         </div>
 
+        {/* Corpo do modal */}
         <div className={styles.body}>
           <h2>Novo Imóvel</h2>
 
-          <label>Título</label>
+          <label htmlFor="titulo">Título</label>
           <input
+            id="titulo"
             type="text"
             value={titulo}
             onChange={e => setTitulo(e.target.value)}
+            placeholder="Ex: Cobertura em Icaraí"
           />
 
-          <label>Descrição</label>
+          <label htmlFor="descricao">Descrição</label>
           <textarea
+            id="descricao"
             value={descricao}
             onChange={e => setDescricao(e.target.value)}
+            placeholder="Breve descrição do imóvel..."
           />
 
-          <label>Status</label>
-          <select value={status} onChange={e => setStatus(e.target.value)}>
+          <label htmlFor="status">Status</label>
+          <select
+            id="status"
+            value={status}
+            onChange={e => setStatus(e.target.value)}
+          >
             <option value="cadastrar">Cadastrar</option>
             <option value="fazer video">Fazer Vídeo</option>
             <option value="fazer tour 360º">Fazer Tour 360º</option>
@@ -70,7 +78,7 @@ export default function ModalNovoImovel({ onClose, onCriar }) {
               onClick={handleCreate}
               disabled={isLoading}
             >
-              {isLoading ? 'Criando Imóvel...' : 'Criar Imóvel'}
+              {isLoading ? 'Criando...' : 'Criar Imóvel'}
             </button>
           </div>
         </div>

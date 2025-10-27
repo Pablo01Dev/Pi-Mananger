@@ -11,7 +11,6 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcl
   const [isDeleting, setIsDeleting] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
 
-  // Atualiza dados do imóvel
   const handleUpdate = async () => {
     setIsUpdating(true);
     try {
@@ -27,7 +26,6 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcl
     }
   };
 
-  // Exclui imóvel
   const handleDeleteImovel = async () => {
     if (isDeleting) return;
     setIsDeleting(true);
@@ -50,7 +48,6 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcl
   return (
     <div className={styles.modal}>
       <div className={styles.modalContent}>
-        {/* Topo */}
         <div className={styles.topButtons}>
           <button
             className={styles.deleteButton}
@@ -74,7 +71,6 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcl
           </button>
         </div>
 
-        {/* Corpo */}
         <div className={styles.body}>
           <h2>Editar Imóvel</h2>
 
@@ -114,7 +110,6 @@ export default function ModalEditarImovel({ imovel, onClose, onAtualizar, onExcl
         </div>
       </div>
 
-      {/* Confirmação de exclusão */}
       {mostrarConfirmacao && (
         <div
           className={styles.confirmacaoOverlay}
