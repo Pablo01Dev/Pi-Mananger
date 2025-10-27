@@ -3,8 +3,10 @@
   padding: .1rem 4em;
   border-bottom: 1px solid #ccc;
   display: flex;
-  justify-content: space-between; /* Espaço entre os filhos */
-  align-items: center; /* Alinha os itens verticalmente no centro */
+  justify-content: space-between;
+  /* Espaço entre os filhos */
+  align-items: center;
+  /* Alinha os itens verticalmente no centro */
 }
 
 
@@ -18,8 +20,10 @@
   display: flex;
   flex-direction: row;
   gap: 2em;
-  margin: 0; /* Removi o margin: auto para o alinhamento correto */
-  padding: 0; /* É bom ter um padding zerado por padrão em listas */
+  margin: 0;
+  /* Removi o margin: auto para o alinhamento correto */
+  padding: 0;
+  /* É bom ter um padding zerado por padrão em listas */
 }
 
 .header nav ul li {
@@ -27,7 +31,8 @@
   display: flex;
   flex-direction: row;
   gap: 2em;
-  margin: 0; /* Removi o margin: auto para o alinhamento correto */
+  margin: 0;
+  /* Removi o margin: auto para o alinhamento correto */
 }
 
 .header nav ul li a {
@@ -37,3 +42,11 @@
   font-family: Roboto;
 }
 
+@media (max-width: 700px) {
+  .header {
+    flex-direction: column;
+  }
+  .header nav ul li {
+    margin-bottom: 1em;
+  }
+}

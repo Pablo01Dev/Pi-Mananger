@@ -9,7 +9,6 @@ export default function Imoveis() {
   const [mostrarModal, setMostrarModal] = useState(false);
   const [abaSelecionada, setAbaSelecionada] = useState('cadastrar');
 
-  // ✅ Carrega imóveis do backend Render
   const carregarImoveis = () => {
     api.get('/imoveis')
       .then(response => {
