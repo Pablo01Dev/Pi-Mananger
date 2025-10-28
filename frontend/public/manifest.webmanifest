@@ -1,11 +1,13 @@
 {
   "name": "Pi Manager",
   "short_name": "PiManager",
+  "description": "Sistema interno da Pinciara Imóveis Exclusivos",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#ffffff",
   "theme_color": "#d5a900",
-  "description": "Sistema interno da Pinciara Imóveis Exclusivos",
   "icons": [
     {
       "src": "/icon-192.png",
