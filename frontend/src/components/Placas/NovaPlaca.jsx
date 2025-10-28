@@ -77,10 +77,15 @@ export default function NovaPlaca({ onClose, onCriar }) {
         altura: parseFloat(formData.altura),
         status: 'produzir',
       };
-      await axios.post(API_URL, payload);
+
+      const res = await axios.post(API_URL, payload);
 
       setFeedbackMessage({ type: 'success', text: 'Material criado com sucesso!' });
-      onCriar();
+
+      // ✅ Passa o novo item criado de volta pro pai
+      if (onCriar) onCriar(res.data);
+
+      // ✅ Fecha o modal depois de atualizar
       onClose();
 
     } catch (err) {
@@ -90,7 +95,7 @@ export default function NovaPlaca({ onClose, onCriar }) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }
 
   return (
     <div className={`${styles.modal} ${styles.novoImovel}`}>

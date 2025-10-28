@@ -1,4 +1,3 @@
-// Placas.jsx
 import { useState } from 'react';
 import styles from '../styles/Placas.module.css';
 import Produzir from '../../src/components/Placas/Produzir';
@@ -6,69 +5,51 @@ import Pagar from '../../src/components/Placas/Pagar';
 import Pago from '../../src/components/Placas/Pago';
 import Disponiveis from '../../src/components/Placas/Disponiveis';
 import Usadas from '../../src/components/Placas/Usadas';
-import NovaPlaca from '../../src/components/Placas/NovaPlaca'; 
+import NovaPlaca from '../../src/components/Placas/NovaPlaca';
 
 export default function Placas() {
   const [abaSelecionada, setAbaSelecionada] = useState('produzir');
-  const [mostrarModal, setMostrarModal] = useState(false); 
+  const [mostrarModal, setMostrarModal] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0); // 👈 força recarregamento das abas
+
+  const handleCriarPlaca = () => {
+    // 🔄 ao criar uma nova placa, força recarregar o componente da aba ativa
+    setReloadKey(prev => prev + 1);
+    setMostrarModal(false);
+  };
 
   const renderizarComponente = () => {
     switch (abaSelecionada) {
       case 'produzir':
-        return <Produzir />;
+        return <Produzir key={reloadKey} />;
       case 'pagar':
-        return <Pagar />;
+        return <Pagar key={reloadKey} />;
       case 'pago':
-        return <Pago />;
+        return <Pago key={reloadKey} />;
       case 'disponíveis':
-        return <Disponiveis />;
+        return <Disponiveis key={reloadKey} />;
       case 'usadas':
-        return <Usadas />;
+        return <Usadas key={reloadKey} />;
       default:
         return null;
     }
-  };
-
-  const handleCriarPlaca = () => {
-    // você pode fazer algo quando a placa for criada, ex: recarregar lista
-    console.log('Placa criada!');
   };
 
   return (
     <div className={styles.container}>
       <nav className={styles.nav}>
         <ul>
-          <li
-            className={abaSelecionada === 'produzir' ? styles.ativo : ''}
-            onClick={() => setAbaSelecionada('produzir')}
-          >
-            Produzir
-          </li>
-          <li
-            className={abaSelecionada === 'pagar' ? styles.ativo : ''}
-            onClick={() => setAbaSelecionada('pagar')}
-          >
-            Pagar
-          </li>
-          <li
-            className={abaSelecionada === 'pago' ? styles.ativo : ''}
-            onClick={() => setAbaSelecionada('pago')}
-          >
-            Pago
-          </li>
-          <li
-            className={abaSelecionada === 'disponíveis' ? styles.ativo : ''}
-            onClick={() => setAbaSelecionada('disponíveis')}
-          >
-            Disponíveis
-          </li>
-          <li
-            className={abaSelecionada === 'usadas' ? styles.ativo : ''}
-            onClick={() => setAbaSelecionada('usadas')}
-          >
-            Usadas
-          </li>
+          {['produzir', 'pagar', 'pago', 'disponíveis', 'usadas'].map((aba) => (
+            <li
+              key={aba}
+              className={abaSelecionada === aba ? styles.ativo : ''}
+              onClick={() => setAbaSelecionada(aba)}
+            >
+              {aba.charAt(0).toUpperCase() + aba.slice(1)}
+            </li>
+          ))}
         </ul>
+
         <div className={styles.novoButton}>
           <button type="button" onClick={() => setMostrarModal(true)}>
             <h4 className={styles.novo}>Nova placa</h4>
@@ -84,7 +65,7 @@ export default function Placas() {
       {mostrarModal && (
         <NovaPlaca
           onClose={() => setMostrarModal(false)}
-          onCriar={handleCriarPlaca}
+          onCriar={handleCriarPlaca} // 🔄 agora recarrega a aba automaticamente
         />
       )}
     </div>

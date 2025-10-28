@@ -68,14 +68,15 @@
 ===================================================== */
 @media (max-width: 700px) {
   .pagarContainer {
-    padding: 1em 1.2em; /* reduz margens laterais */
+    padding: .2em .2em; /* reduz margens laterais */
     align-items: stretch; /* ocupa toda a largura */
+    margin: 0;
   }
 
   .heroTitle {
     flex-direction: column; /* empilha texto e botão */
     height: auto; /* deixa altura automática */
-    padding: 0.8em;
+    padding: 0.6em;
     gap: 0.5em;
   }
 
