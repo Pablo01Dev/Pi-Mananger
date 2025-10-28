@@ -9,33 +9,34 @@ export default function ModalNovoImovel({ onClose, onCriar }) {
   const [status, setStatus] = useState('cadastrar');
   const [isLoading, setIsLoading] = useState(false);
 
- const handleCreate = async () => {
-  if (!titulo.trim()) {
-    alert('O campo título é obrigatório.');
-    return;
-  }
-
-  setIsLoading(true);
-  try {
-    const res = await api.post('/imoveis', { titulo, descricao, status });
-
-    // ✅ Aceita tanto 200 quanto 201 (Created)
-    if (res.status === 200 || res.status === 201) {
-      alert('Imóvel criado com sucesso!');
-      if (onCriar) onCriar(res.data); // passa o imóvel criado para o pai
-      onClose();
-    } else {
-      console.warn('Resposta inesperada:', res);
-      alert('Servidor respondeu com código inesperado.');
+  const handleCreate = async () => {
+    if (!titulo.trim()) {
+      alert('O campo título é obrigatório.');
+      return;
     }
-  } catch (err) {
-    console.error('Erro ao criar imóvel:', err);
-    const msg = err.response?.data?.erro || err.message || 'Erro desconhecido';
-    alert('Erro ao criar imóvel: ' + msg);
-  } finally {
-    setIsLoading(false);
-  }
-};
+
+    setIsLoading(true);
+    try {
+      const res = await api.post('/imoveis', { titulo, descricao, status });
+
+      // ✅ Aceita tanto 200 quanto 201 (Created)
+      if (res.status === 200 || res.status === 201) {
+        alert('Imóvel criado com sucesso!');
+        if (onCriar) onCriar(res.data); // <-- envia o retorno completo
+        onClose();
+      }
+      else {
+        console.warn('Resposta inesperada:', res);
+        alert('Servidor respondeu com código inesperado.');
+      }
+    } catch (err) {
+      console.error('Erro ao criar imóvel:', err);
+      const msg = err.response?.data?.erro || err.message || 'Erro desconhecido';
+      alert('Erro ao criar imóvel: ' + msg);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
 
   return (
