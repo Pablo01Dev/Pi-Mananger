@@ -1,23 +1,51 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import { VitePWA } from "vite-plugin-pwa";
 
-// Configuração otimizada para deploy na Vercel + React Router
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    VitePWA({
+      registerType: "autoUpdate",
+      includeAssets: ["favicon.ico", "robots.txt", "apple-touch-icon.png"],
+      manifest: {
+        name: "Pi Manager",
+        short_name: "PiManager",
+        start_url: "/",
+        display: "standalone",
+        background_color: "#ffffff",
+        theme_color: "#d5a900",
+        icons: [
+          {
+            src: "/icon-192.png",
+            sizes: "192x192",
+            type: "image/png",
+          },
+          {
+            src: "/icon-512.png",
+            sizes: "512x512",
+            type: "image/png",
+          },
+        ],
+      },
+    }),
+  ],
+
   server: {
     port: 5173,
     host: true,
     open: true,
   },
+
   build: {
-    outDir: "dist", // diretório padrão que a Vercel vai publicar
+    outDir: "dist", // Diretório que a Vercel publica
   },
-  // Fundamental para React Router funcionar em rotas diretas (ex: /placas)
+
   preview: {
     port: 4173,
     strictPort: true,
   },
-  // Corrige fallback de rotas no ambiente de desenvolvimento e produção
+
   define: {
     "process.env": process.env,
   },
