@@ -105,5 +105,115 @@ price {
     padding: 0 3px;
     border-radius: 2px;
     font-size: 11px;
-    color:  black;
+    color: black;
+}
+
+@media (max-width: 700px) {
+    .card {
+        flex-direction: column;
+        width: 100%;
+        padding: 12px;
+    }
+
+    .linhas {
+        width: 100%;
+        padding: 0;
+    }
+
+    /* Oculta o layout em duas linhas padrão */
+    .linha1,
+    .linha2 {
+        display: none;
+    }
+
+    /* Novo layout responsivo */
+    .linhaMobile {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin-top: 6px;
+    }
+
+    .linhaMobileItem {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 4px;
+    }
+
+    .linhaMobileItem span:first-child {
+        font-weight: 600;
+        color: #444;
+    }
+
+    .linhaMobileItem span:last-child {
+        color: #111;
+        text-align: right;
+    }
+
+    .obs {
+        font-size: 0.8rem;
+        margin-top: 8px;
+        color: #777;
+    }
+
+    .checkBox {
+        width: 100%;
+        justify-content: flex-end;
+        margin-top: 10px;
+    }
+}
+
+@media (max-width: 700px) {
+    .card {
+        flex-direction: column;
+        width: 100%;
+        padding: 12px;
+    }
+
+    .linhas {
+        width: 100%;
+        padding: 0;
+    }
+
+    /* Empilha linhas e remove gaps exagerados */
+    .linha1,
+    .linha2 {
+        flex-direction: column;
+        gap: 0.3em;
+    }
+
+    /* Oculta a linha de cabeçalho (rótulos) */
+    .linha1 {
+        display: none;
+    }
+
+    .date,
+    .title,
+    .content,
+    .width,
+    .height,
+    .material,
+    .price {
+        width: 100%;
+        font-size: 0.95rem;
+    }
+
+    .obs {
+        font-size: 0.8rem;
+        margin-top: 6px;
+        word-break: break-word;
+    }
+
+    .checkBox {
+        width: 100%;
+        justify-content: flex-end;
+        margin-top: 10px;
+    }
+
+    .checkBox input[type="checkbox"] {
+        width: 20px;
+        height: 20px;
+    }
 }
