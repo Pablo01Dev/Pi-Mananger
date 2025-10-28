@@ -1,46 +1,62 @@
 import express from 'express';
-import multer from 'multer'; // Importe o Multer aqui!
+import multer from 'multer';
 import {
-    criarImovel,
-    listarImoveis,
-    deletarImovel,
-    atualizarStatus,
-    atualizarVideo,
-    atualizarImovel,
-    atualizarOrdem,
-    buscarUltimoImovel,
-    uploadImagens, // Importe a nova função de upload de imagens
-    deletarImagem   // Importe a nova função de deleção de imagem
+  criarImovel,
+  listarImoveis,
+  deletarImovel,
+  atualizarStatus,
+  atualizarVideo,
+  atualizarImovel,
+  atualizarOrdem,
+  buscarUltimoImovel,
+  uploadImagens,
+  deletarImagem
 } from '../controllers/imovelController.js';
 
 const router = express.Router();
 
-// Configuração do Multer para armazenamento em memória (buffer)
-// Isso é crucial para que o arquivo seja processado e passado para o Dropbox
+// ---------------------------------------------
+// ⚙️ Configuração do Multer — armazenamento em memória
+// ---------------------------------------------
 const storage = multer.memoryStorage();
-const upload = multer({ storage: storage });
+const upload = multer({ storage });
 
-// Rotas existentes
-router.get('/ultimo', buscarUltimoImovel);
-router.get('/', listarImoveis);
+// ---------------------------------------------
+// 🏠 Rotas principais
+// ---------------------------------------------
+
+// Criar novo imóvel
 router.post('/', criarImovel);
-router.patch('/:id/status', atualizarStatus);
-router.put('/:id', atualizarImovel); // Patch é mais semântico para atualizações parciais, mas PUT também funciona
+
+// Listar todos os imóveis
+router.get('/', listarImoveis);
+
+// Buscar o último imóvel criado
+router.get('/ultimo', buscarUltimoImovel);
+
+// Atualizar informações gerais do imóvel
+router.put('/:id', atualizarImovel);
+
+// Atualizar status (ex: “fazer vídeo”, “concluído”)
+router.put('/:id/status', atualizarStatus);
+
+// Atualizar ordem dos imóveis (drag and drop)
 router.put('/ordem', atualizarOrdem);
+
+// Excluir imóvel (move pasta para /finalizados no Dropbox)
 router.delete('/:id', deletarImovel);
 
-// --- Novas e Atualizadas Rotas de Upload de Arquivos ---
+// ---------------------------------------------
+// 📦 Uploads de mídia (imagens e vídeos)
+// ---------------------------------------------
 
-// Rota para atualizar/enviar um vídeo (requer 'arquivo' no FormData)
-// Usa `upload.single()` porque esperamos apenas um arquivo de vídeo.
-router.patch('/:id/video', upload.single('arquivo'), atualizarVideo);
+// Upload de múltiplas imagens (form-data: imagens[])
+router.post('/:id/imagens', upload.array('imagens'), uploadImagens);
 
-// Rota para fazer upload de múltiplas imagens (requer 'arquivos' no FormData)
-// Usa `upload.array()` porque esperamos múltiplos arquivos de imagem.
-router.post('/:id/imagens', upload.array('arquivos'), uploadImagens);
+// Upload de vídeo único (form-data: video)
+router.post('/:id/video', upload.single('video'), atualizarVideo);
 
-// Rota para deletar uma imagem específica pelo seu filename
+// Excluir imagem específica de um imóvel
 router.delete('/:id/imagens/:filename', deletarImagem);
-
 
 export default router;
