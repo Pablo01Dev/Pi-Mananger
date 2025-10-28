@@ -117,12 +117,13 @@ export default function Imoveis() {
       {mostrarModal && (
         <NovoImovel
           onClose={() => setMostrarModal(false)}
-          onCriar={() => {
+          onCriar={(novoImovel) => {
             setMostrarModal(false);
-            carregarImoveis();
+            setImoveis((prev) => [...prev, novoImovel]);
           }}
           onExcluir={handleExcluirImovel}
         />
+
       )}
     </div>
   );

@@ -9,25 +9,34 @@ export default function ModalNovoImovel({ onClose, onCriar }) {
   const [status, setStatus] = useState('cadastrar');
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleCreate = async () => {
-    if (!titulo.trim()) {
-      alert('O campo título é obrigatório.');
-      return;
-    }
+ const handleCreate = async () => {
+  if (!titulo.trim()) {
+    alert('O campo título é obrigatório.');
+    return;
+  }
 
-    setIsLoading(true);
-    try {
-      await api.post('/imoveis', { titulo, descricao, status });
+  setIsLoading(true);
+  try {
+    const res = await api.post('/imoveis', { titulo, descricao, status });
+
+    // ✅ Aceita tanto 200 quanto 201 (Created)
+    if (res.status === 200 || res.status === 201) {
       alert('Imóvel criado com sucesso!');
-      if (onCriar) onCriar();
+      if (onCriar) onCriar(res.data); // passa o imóvel criado para o pai
       onClose();
-    } catch (err) {
-      console.error('Erro ao criar imóvel:', err.response?.data || err.message);
-      alert('Erro ao criar imóvel: ' + (err.response?.data?.erro || err.message));
-    } finally {
-      setIsLoading(false);
+    } else {
+      console.warn('Resposta inesperada:', res);
+      alert('Servidor respondeu com código inesperado.');
     }
-  };
+  } catch (err) {
+    console.error('Erro ao criar imóvel:', err);
+    const msg = err.response?.data?.erro || err.message || 'Erro desconhecido';
+    alert('Erro ao criar imóvel: ' + msg);
+  } finally {
+    setIsLoading(false);
+  }
+};
+
 
   return (
     <div className={`${styles.modal} ${styles.novoImovel}`}>
