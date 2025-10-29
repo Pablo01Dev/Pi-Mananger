@@ -136,6 +136,10 @@ export const deletarPlaca = async (req, res) => {
 
 // ✅ Usar placa (com decremento de quantidade)
 export const usarPlaca = async (req, res) => {
+  console.log("🧩 ROTA /usar/:id ACESSADA");
+  console.log("📦 Params:", req.params);
+  console.log("📩 Body recebido:", req.body);
+
   try {
     const { id } = req.params;
     const { quantidadeUsada } = req.body;

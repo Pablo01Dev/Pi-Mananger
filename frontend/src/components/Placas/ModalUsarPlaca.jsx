@@ -5,6 +5,7 @@ import { MdOutlineClose } from "react-icons/md";
 export default function ModalUsarPlaca({ placa, onConfirm, onClose }) {
   const [quantidadeUsar, setQuantidadeUsar] = useState(1);
 
+  
   const handleConfirm = () => {
     if (quantidadeUsar <= 0) return alert("Quantidade inválida");
     onConfirm(placa, quantidadeUsar);
