@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import styles from '../../styles/ModalNovo.module.css';
+import styles from '../../styles/ModalUsarPlaca.module.css';
 import { MdOutlineClose } from "react-icons/md";
 
 export default function ModalUsarPlaca({ placa, onConfirm, onClose }) {

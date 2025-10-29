@@ -35,18 +35,27 @@ export default function Disponiveis() {
   // 🟣 Confirma o uso via nova rota /usar/:id
   const confirmarUso = async (placa, qtdUsada) => {
     try {
-      const res = await api.put(`/placas/usar/${placa._id}`, {
-        quantidadeUsada: qtdUsada
-      });
+      const quantidadeUsada = Number(qtdUsada) || 1;
 
-      // Atualiza a lista local
+      console.log('📤 Enviando uso:', { quantidadeUsada });
+
+      const res = await api.put(
+        `/placas/usar/${placa._id}`,
+        JSON.stringify({ quantidadeUsada }), // força corpo JSON puro
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
       setPlacas(prev =>
         prev.map(p => (p._id === placa._id ? res.data.placa : p))
       );
 
       setPlacaSelecionada(null);
     } catch (error) {
-      console.error('Erro ao usar placa:', error);
+      console.error('❌ Erro ao usar placa:', error);
       alert('Falha ao usar placa.');
     }
   };
