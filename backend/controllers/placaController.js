@@ -111,7 +111,6 @@ export const deletarPlaca = async (req, res) => {
 };
 
 // ✅ Usar placa (com decremento de quantidade)
-// ✅ Usar placa (com decremento de quantidade)
 export const usarPlaca = async (req, res) => {
   console.log("🧩 ROTA /usar/:id ACESSADA");
   console.log("📦 Params:", req.params);
@@ -119,12 +118,11 @@ export const usarPlaca = async (req, res) => {
 
   try {
     const { id } = req.params;
-    const { quantidadeUsada } = req.body;
+    const qtdUsada = Number(req.body.quantidadeUsada) || 1;
 
     const placa = await Placa.findById(id);
     if (!placa) return res.status(404).json({ error: 'Placa não encontrada.' });
 
-    const qtdUsada = Number(quantidadeUsada) || 1;
     if (qtdUsada <= 0) {
       return res.status(400).json({ error: 'Quantidade inválida.' });
     }
@@ -133,13 +131,14 @@ export const usarPlaca = async (req, res) => {
       return res.status(400).json({ error: 'Quantidade insuficiente disponível.' });
     }
 
+    // 🧮 Cálculo da nova quantidade
     const novaQuantidade = placa.quantidade - qtdUsada;
 
     if (novaQuantidade > 0) {
       placa.quantidade = novaQuantidade;
     } else {
-      placa.status = 'usada';
       placa.quantidade = 0;
+      placa.status = 'usada'; // 👈 valor válido no schema
     }
 
     await placa.save();
@@ -153,5 +152,3 @@ export const usarPlaca = async (req, res) => {
     res.status(500).json({ error: 'Erro ao usar placa: ' + err.message });
   }
 };
-
-
