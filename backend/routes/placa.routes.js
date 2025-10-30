@@ -13,7 +13,6 @@ const router = express.Router();
 
 // ✅ ESSA ROTA É FUNDAMENTAL
 router.get('/', listarPlacas);
-
 router.post('/', criarPlaca);
 router.get('/status/:status', listarPlacasPorStatus);
 router.put('/enviar/:id', enviarPlaca);

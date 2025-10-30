@@ -14,6 +14,7 @@ const API_URL =
 export default function Usadas() {
   const [placas, setPlacas] = useState([]);
 
+  // 🔹 Busca inicial
   useEffect(() => {
     async function fetchPlacas() {
       try {
@@ -26,6 +27,7 @@ export default function Usadas() {
     fetchPlacas();
   }, []);
 
+  // 🔹 Marcar como usada
   const handleUsar = async (id) => {
     try {
       await axios.put(`${API_URL}/usar/${id}`);
@@ -38,16 +40,38 @@ export default function Usadas() {
     }
   };
 
-  const handleDelete = async (id) => {
+  // 🔹 Deletar total ou parcial
+  const handleDelete = async (id, quantidadeExcluir = 1) => {
     try {
-      await axios.delete(`${API_URL}/${id}`);
-      setPlacas((prev) => prev.filter((p) => p._id !== id));
+      // Busca a placa
+      const placa = placas.find((p) => p._id === id);
+      if (!placa) return;
+
+      // Se ainda restar quantidade, apenas reduz
+      if (placa.quantidade > quantidadeExcluir) {
+        const novaQtd = placa.quantidade - quantidadeExcluir;
+
+        await axios.put(`${API_URL}/usar/${id}`, {
+          quantidadeUsada: quantidadeExcluir,
+        });
+
+        setPlacas((prev) =>
+          prev.map((p) =>
+            p._id === id ? { ...p, quantidade: novaQtd } : p
+          )
+        );
+      } else {
+        // Se acabou, deleta
+        await axios.delete(`${API_URL}/${id}`);
+        setPlacas((prev) => prev.filter((p) => p._id !== id));
+      }
     } catch (error) {
       console.error('Erro ao deletar a placa:', error);
       alert('Falha ao deletar a placa.');
     }
   };
 
+  // 🔹 Renderização
   return (
     <div className={styles.container}>
       <div className={styles.gridCategorias}>
@@ -67,7 +91,7 @@ export default function Usadas() {
                       key={placa._id}
                       placa={placa}
                       onBotaoClick={handleUsar}
-                      onDelete={handleDelete}
+                      onDelete={handleDelete} // agora recebe id e quantidade
                     />
                   ))
                 ) : (
