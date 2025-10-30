@@ -53,7 +53,7 @@ export default function Usadas() {
       <div className={styles.gridCategorias}>
         {categorias.map((categoria) => {
           const placasFiltradas = placas.filter(
-            (p) => p.tipo === categoria && p.status === 'usado'
+            (p) => p.tipo === categoria && p.status === 'usada'
           );
 
           return (
