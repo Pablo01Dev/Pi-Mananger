@@ -91,8 +91,9 @@ export default function Disponiveis() {
         {categorias.map((categoria) => {
           // Proteção contra undefined e filtragem estável
           const placasFiltradas = placas.filter(
-            (p) => p?.tipo === categoria && p?.status === 'pago'
+            (p) => p?.tipo === categoria && p?.status === 'pago' && p?.quantidade > 0
           );
+
 
           return (
             <div key={categoria} className={styles.colunaCategoria}>
