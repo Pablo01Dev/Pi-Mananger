@@ -1,6 +1,7 @@
 import Placa from '../models/Placa.js';
 
 // ✅ Criar ou somar placa existente
+// ✅ Criar ou somar placa existente
 export const criarPlaca = async (req, res) => {
   try {
     const { titulo, largura, altura, material, tipo, quantidade, observacao } = req.body;
@@ -14,16 +15,22 @@ export const criarPlaca = async (req, res) => {
     const tipoNorm = tipo.trim().toLowerCase();
     const observacaoNorm = (observacao || '').trim().toLowerCase();
 
-    // 🔍 Tenta achar uma placa igual já em produção
-    const placaExistente = await Placa.findOne({
+    // 🔍 Monta a query de busca de forma flexível
+    const query = {
       titulo: { $regex: new RegExp(`^${tituloNorm}$`, 'i') },
       largura,
       altura,
       material: { $regex: new RegExp(`^${materialNorm}$`, 'i') },
       tipo: { $regex: new RegExp(`^${tipoNorm}$`, 'i') },
-      observacao: { $regex: new RegExp(`^${observacaoNorm}$`, 'i') },
       status: 'produzir'
-    });
+    };
+
+    // Só compara observação se ela existir
+    if (observacaoNorm) {
+      query.observacao = { $regex: new RegExp(`^${observacaoNorm}$`, 'i') };
+    }
+
+    const placaExistente = await Placa.findOne(query);
 
     if (placaExistente) {
       placaExistente.quantidade += Number(quantidade) || 1;
@@ -34,7 +41,7 @@ export const criarPlaca = async (req, res) => {
       });
     }
 
-    // 🆕 Cria uma nova
+    // 🆕 Cria nova placa
     const novaPlaca = new Placa({
       titulo,
       largura,
@@ -57,37 +64,6 @@ export const criarPlaca = async (req, res) => {
   }
 };
 
-// ✅ Listar todas as placas
-export const listarPlacas = async (req, res) => {
-  try {
-    const placas = await Placa.find();
-    res.json(placas);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
-
-// ✅ Enviar placa (para etapa "pagar")
-export const enviarPlaca = async (req, res) => {
-  try {
-    const placa = await Placa.findById(req.params.id);
-    if (!placa) return res.status(404).json({ error: 'Placa não encontrada' });
-
-    const precoPorMetroQuadrado = 35;
-    const metragem = (placa.largura / 100) * (placa.altura / 100);
-    const valorUnitario = metragem * precoPorMetroQuadrado;
-    const valorTotal = valorUnitario * placa.quantidade;
-
-    placa.status = 'pagar';
-    placa.dataEnvio = new Date();
-    placa.valor = valorTotal;
-
-    await placa.save();
-    res.json(placa);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-};
 
 // ✅ Atualizar status
 export const atualizarStatus = async (req, res) => {
@@ -135,6 +111,7 @@ export const deletarPlaca = async (req, res) => {
 };
 
 // ✅ Usar placa (com decremento de quantidade)
+// ✅ Usar placa (com decremento de quantidade)
 export const usarPlaca = async (req, res) => {
   console.log("🧩 ROTA /usar/:id ACESSADA");
   console.log("📦 Params:", req.params);
@@ -144,8 +121,6 @@ export const usarPlaca = async (req, res) => {
     const { id } = req.params;
     const { quantidadeUsada } = req.body;
 
-    console.log('📩 BODY RECEBIDO:', req.body);
-
     const placa = await Placa.findById(id);
     if (!placa) return res.status(404).json({ error: 'Placa não encontrada.' });
 
@@ -154,8 +129,8 @@ export const usarPlaca = async (req, res) => {
       return res.status(400).json({ error: 'Quantidade inválida.' });
     }
 
-    if (placa.quantidade <= 0) {
-      return res.status(400).json({ error: 'Nenhuma unidade disponível.' });
+    if (placa.quantidade < qtdUsada) {
+      return res.status(400).json({ error: 'Quantidade insuficiente disponível.' });
     }
 
     const novaQuantidade = placa.quantidade - qtdUsada;
@@ -163,10 +138,9 @@ export const usarPlaca = async (req, res) => {
     if (novaQuantidade > 0) {
       placa.quantidade = novaQuantidade;
     } else {
-      placa.status = 'usado';
+      placa.status = 'usada';
       placa.quantidade = 0;
     }
-
 
     await placa.save();
 
@@ -179,3 +153,5 @@ export const usarPlaca = async (req, res) => {
     res.status(500).json({ error: 'Erro ao usar placa: ' + err.message });
   }
 };
+
+
