@@ -68,7 +68,7 @@ export const criarPlaca = async (req, res) => {
 // ✅ Atualizar status
 export const atualizarStatus = async (req, res) => {
   try {
-    const validStatuses = ['produzir', 'pago', 'usado', 'pagar', 'outro'];
+    const validStatuses = ['produzir', 'pago', 'usada', 'pagar', 'outro'];
     const { status } = req.body;
 
     if (!validStatuses.includes(status)) {

@@ -48,7 +48,7 @@ export default function Produzir() {
   const handleUsar = async (placa) => {
     try {
       const res = await axios.put(`${API_URL}/atualizar-status/${placa._id}`, {
-        status: 'usado',
+        status: 'usada',
       });
 
       setPlacas((prev) =>

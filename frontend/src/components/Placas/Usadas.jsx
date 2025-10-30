@@ -30,7 +30,7 @@ export default function Usadas() {
     try {
       await axios.put(`${API_URL}/usar/${id}`);
       setPlacas((prev) =>
-        prev.map((p) => (p._id === id ? { ...p, status: 'usado' } : p))
+        prev.map((p) => (p._id === id ? { ...p, status: 'usada' } : p))
       );
     } catch (error) {
       console.error('Erro ao usar a placa:', error);
