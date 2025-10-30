@@ -6,7 +6,7 @@ import mongoose from 'mongoose';
 // ==================================================
 export const criarImovel = async (req, res) => {
   try {
-    const { titulo, descricao, status } = req.body;
+    const { titulo, descricao, status, endereco } = req.body;
 
     if (!titulo || titulo.trim() === '') {
       return res.status(400).json({ erro: 'O campo título é obrigatório.' });
@@ -15,6 +15,7 @@ export const criarImovel = async (req, res) => {
     const novoImovel = new Imovel({
       titulo,
       descricao: descricao || '',
+      endereco: endereco || '', // ✅ novo campo
       status: status || 'cadastrar',
     });
 

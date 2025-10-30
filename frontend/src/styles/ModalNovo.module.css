@@ -381,3 +381,21 @@ textarea {
   font-family: 'Roboto';
   font-size: 14px;
 }
+
+.gpsButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--gold, #d5a900);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0 12px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.gpsButton:hover {
+  background: #b89600;
+}

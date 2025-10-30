@@ -1,14 +1,62 @@
 import { useState } from 'react';
 import api from '../../api';
 import styles from '../../styles/ModalNovo.module.css';
-import { MdOutlineClose } from "react-icons/md";
+import { MdOutlineClose, MdMyLocation } from "react-icons/md";
 
 export default function ModalNovoImovel({ onClose, onCriar }) {
   const [titulo, setTitulo] = useState('');
   const [descricao, setDescricao] = useState('');
+  const [endereco, setEndereco] = useState(''); // 🆕 novo campo
   const [status, setStatus] = useState('cadastrar');
   const [isLoading, setIsLoading] = useState(false);
+  const [isLocating, setIsLocating] = useState(false); // 🧭 controle de GPS
 
+  // ==================================================
+  // 📍 Obter localização atual via GPS + OpenStreetMap
+  // ==================================================
+  const handleUsarLocalizacao = () => {
+    if (!navigator.geolocation) {
+      alert('Seu navegador não suporta geolocalização.');
+      return;
+    }
+
+    setIsLocating(true);
+
+    navigator.geolocation.getCurrentPosition(
+      async (position) => {
+        const { latitude, longitude } = position.coords;
+        try {
+          // 🗺️ Consulta reversa ao OpenStreetMap
+          const res = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`
+          );
+          const data = await res.json();
+
+          const { road, house_number, suburb, city, town, state } = data.address || {};
+          const enderecoFormatado =
+            `${road || ''} ${house_number || ''}, ${suburb || city || town || ''} - ${state || ''}`.trim();
+
+          if (enderecoFormatado) setEndereco(enderecoFormatado);
+          else setEndereco(`${latitude.toFixed(5)}, ${longitude.toFixed(5)}`);
+
+        } catch (err) {
+          console.error('Erro ao buscar endereço:', err);
+          alert('Não foi possível obter o endereço automaticamente.');
+        } finally {
+          setIsLocating(false);
+        }
+      },
+      (error) => {
+        console.error('Erro ao acessar localização:', error);
+        alert('Não foi possível acessar sua localização.');
+        setIsLocating(false);
+      }
+    );
+  };
+
+  // ==================================================
+  // 🏗️ Criar imóvel
+  // ==================================================
   const handleCreate = async () => {
     if (!titulo.trim()) {
       alert('O campo título é obrigatório.');
@@ -17,15 +65,13 @@ export default function ModalNovoImovel({ onClose, onCriar }) {
 
     setIsLoading(true);
     try {
-      const res = await api.post('/imoveis', { titulo, descricao, status });
+      const res = await api.post('/imoveis', { titulo, descricao, endereco, status });
 
-      // ✅ Aceita tanto 200 quanto 201 (Created)
       if (res.status === 200 || res.status === 201) {
         alert('Imóvel criado com sucesso!');
-        if (onCriar) onCriar(res.data); // <-- envia o retorno completo
+        if (onCriar) onCriar(res.data);
         onClose();
-      }
-      else {
+      } else {
         console.warn('Resposta inesperada:', res);
         alert('Servidor respondeu com código inesperado.');
       }
@@ -38,7 +84,9 @@ export default function ModalNovoImovel({ onClose, onCriar }) {
     }
   };
 
-
+  // ==================================================
+  // 🧱 Render
+  // ==================================================
   return (
     <div className={`${styles.modal} ${styles.novoImovel}`}>
       <div className={styles.modalContent}>
@@ -69,6 +117,28 @@ export default function ModalNovoImovel({ onClose, onCriar }) {
             onChange={e => setDescricao(e.target.value)}
             placeholder="Breve descrição do imóvel..."
           />
+
+          {/* 🏠 Campo de Endereço + botão GPS */}
+          <label htmlFor="endereco">Endereço</label>
+          <div style={{ display: 'flex', gap: '8px' }}>
+            <input
+              id="endereco"
+              type="text"
+              value={endereco}
+              onChange={e => setEndereco(e.target.value)}
+              placeholder="Digite ou use o GPS..."
+              style={{ flex: 1 }}
+            />
+            <button
+              type="button"
+              onClick={handleUsarLocalizacao}
+              className={styles.gpsButton}
+              disabled={isLocating}
+              title="Usar localização atual"
+            >
+              <MdMyLocation />
+            </button>
+          </div>
 
           <label htmlFor="status">Status</label>
           <select
