@@ -1,7 +1,5 @@
 import Placa from '../models/Placa.js';
 
-// ✅ Criar ou somar placa existente
-// ✅ Criar ou somar placa existente
 export const criarPlaca = async (req, res) => {
   try {
     const { titulo, largura, altura, material, tipo, quantidade, observacao } = req.body;
