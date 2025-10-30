@@ -163,9 +163,10 @@ export const usarPlaca = async (req, res) => {
     if (novaQuantidade > 0) {
       placa.quantidade = novaQuantidade;
     } else {
-      placa.status = 'usado';
+      placa.status = 'usadas';
       placa.quantidade = 0;
     }
+
 
     await placa.save();
 

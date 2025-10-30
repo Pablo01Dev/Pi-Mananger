@@ -28,3 +28,4 @@ mongoose.connect(process.env.MONGO_URI)
     });
   })
   .catch(err => console.error('❌ Erro ao conectar ao MongoDB:', err));
+  
