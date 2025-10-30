@@ -1,14 +1,21 @@
 import { useState } from 'react';
 import styles from '../../styles/ModalUsarPlaca.module.css';
-import { MdOutlineClose } from "react-icons/md";
+import { MdOutlineClose, MdAdd, MdRemove } from "react-icons/md";
 
 export default function ModalUsarPlaca({ placa, onConfirm, onClose }) {
   const [quantidadeUsar, setQuantidadeUsar] = useState(1);
 
-  
   const handleConfirm = () => {
     if (quantidadeUsar <= 0) return alert("Quantidade inválida");
     onConfirm(placa, quantidadeUsar);
+  };
+
+  const diminuir = () => {
+    setQuantidadeUsar(prev => (prev > 1 ? prev - 1 : 1));
+  };
+
+  const aumentar = () => {
+    setQuantidadeUsar(prev => (prev < placa.quantidade ? prev + 1 : prev));
   };
 
   return (
@@ -27,13 +34,28 @@ export default function ModalUsarPlaca({ placa, onConfirm, onClose }) {
           <p>Quantidade disponível: {placa.quantidade}</p>
 
           <label>Quantas placas deseja usar?</label>
-          <input
-            type="number"
-            min="1"
-            max={placa.quantidade}
-            value={quantidadeUsar}
-            onChange={e => setQuantidadeUsar(Number(e.target.value))}
-          />
+
+          <div className={styles.counterContainer}>
+            <button
+              type="button"
+              className={styles.counterButton}
+              onClick={diminuir}
+              disabled={quantidadeUsar <= 1}
+            >
+              <MdRemove />
+            </button>
+
+            <span className={styles.counterValue}>{quantidadeUsar}</span>
+
+            <button
+              type="button"
+              className={styles.counterButton}
+              onClick={aumentar}
+              disabled={quantidadeUsar >= placa.quantidade}
+            >
+              <MdAdd />
+            </button>
+          </div>
 
           <div className={styles.footerButtons}>
             <button

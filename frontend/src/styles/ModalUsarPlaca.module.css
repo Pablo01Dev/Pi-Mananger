@@ -129,3 +129,40 @@
     font-size: 1rem;
   }
 }
+
+.counterContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 10px 0 20px 0;
+}
+
+.counterButton {
+  background-color: #d5a900;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 10px;
+  font-size: 1.4rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.counterButton:hover:not(:disabled) {
+  background-color: #b89600;
+}
+
+.counterButton:disabled {
+  background-color: #e0e0e0;
+  color: #aaa;
+  cursor: not-allowed;
+}
+
+.counterValue {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #333;
+  min-width: 30px;
+  text-align: center;
+}
