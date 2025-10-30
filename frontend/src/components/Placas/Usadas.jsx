@@ -43,11 +43,9 @@ export default function Usadas() {
   // 🔹 Deletar total ou parcial
   const handleDelete = async (id, quantidadeExcluir = 1) => {
     try {
-      // Busca a placa
       const placa = placas.find((p) => p._id === id);
       if (!placa) return;
 
-      // Se ainda restar quantidade, apenas reduz
       if (placa.quantidade > quantidadeExcluir) {
         const novaQtd = placa.quantidade - quantidadeExcluir;
 
@@ -61,7 +59,6 @@ export default function Usadas() {
           )
         );
       } else {
-        // Se acabou, deleta
         await axios.delete(`${API_URL}/${id}`);
         setPlacas((prev) => prev.filter((p) => p._id !== id));
       }
@@ -76,8 +73,13 @@ export default function Usadas() {
     <div className={styles.container}>
       <div className={styles.gridCategorias}>
         {categorias.map((categoria) => {
+          // 🟡 Aplica o mesmo filtro das disponíveis:
+          // mostra apenas placas usadas com quantidade > 0
           const placasFiltradas = placas.filter(
-            (p) => p.tipo === categoria && p.status === 'usada'
+            (p) =>
+              p?.tipo === categoria &&
+              p?.status === 'usada' &&
+              p?.quantidade > 0
           );
 
           return (
@@ -91,7 +93,7 @@ export default function Usadas() {
                       key={placa._id}
                       placa={placa}
                       onBotaoClick={handleUsar}
-                      onDelete={handleDelete} // agora recebe id e quantidade
+                      onDelete={handleDelete}
                     />
                   ))
                 ) : (
