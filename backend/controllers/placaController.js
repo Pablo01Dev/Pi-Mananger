@@ -152,24 +152,42 @@ export const usarPlaca = async (req, res) => {
     const placa = await Placa.findById(id);
     if (!placa) return res.status(404).json({ error: 'Placa não encontrada.' });
 
-    if (qtdUsada <= 0) return res.status(400).json({ error: 'Quantidade inválida.' });
-    if (placa.quantidade < qtdUsada) return res.status(400).json({ error: 'Quantidade insuficiente disponível.' });
-
-    const novaQuantidade = placa.quantidade - qtdUsada;
-
-    if (novaQuantidade > 0) {
-      placa.quantidade = novaQuantidade;
-    } else {
-      placa.quantidade = 0;
-      placa.status = 'usada';
+    if (qtdUsada <= 0) {
+      return res.status(400).json({ error: 'Quantidade inválida.' });
     }
 
+    if (placa.quantidade < qtdUsada) {
+      return res.status(400).json({ error: 'Quantidade insuficiente disponível.' });
+    }
+
+    // 🔹 Calcula nova quantidade para a placa original
+    const novaQuantidade = placa.quantidade - qtdUsada;
+
+    // 🔹 Atualiza a placa original
+    placa.quantidade = novaQuantidade;
     await placa.save();
 
-    res.status(200).json({
-      message: `Usadas ${qtdUsada} unidade(s). Restam ${placa.quantidade}.`,
-      placa
+    // 🔹 Cria uma nova placa com status "usada"
+    const placaUsada = new Placa({
+      titulo: placa.titulo,
+      largura: placa.largura,
+      altura: placa.altura,
+      material: placa.material,
+      tipo: placa.tipo,
+      observacao: placa.observacao,
+      quantidade: qtdUsada,
+      status: 'usada'
     });
+    await placaUsada.save();
+
+    console.log(`✅ ${qtdUsada} unidade(s) movida(s) para "usadas".`);
+
+    res.status(200).json({
+      message: `Foram movidas ${qtdUsada} unidade(s) para "usadas".`,
+      placaAtualizada: placa,
+      placaNova: placaUsada
+    });
+
   } catch (err) {
     console.error('❌ Erro ao usar placa:', err);
     res.status(500).json({ error: 'Erro ao usar placa: ' + err.message });
