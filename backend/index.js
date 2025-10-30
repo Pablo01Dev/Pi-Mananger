@@ -1,4 +1,3 @@
-// backend/index.js
 import express from 'express';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
@@ -9,40 +8,27 @@ dotenv.config();
 
 const app = express();
 
-// ✅ CORS configurado para permitir acesso do Vercel e local
 app.use(cors({
   origin: [
-    'https://pi-mananger.vercel.app',  // domínio do front
-    'http://localhost:5173'            // ambiente local
+    'https://pi-mananger.vercel.app',
+    'http://localhost:5173'
   ],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// ✅ Middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use('/uploads', express.static('uploads'));
 
-// ✅ Rotas principais (mantém o prefixo /api)
+// ✅ Rotas principais
 app.use('/api', routes);
 
-// ✅ Rota de teste (para confirmar se a API está viva)
-app.get('/', (req, res) => {
-  res.send('API Pi-Mananger funcionando! 🚀');
-});
+app.get('/', (req, res) => res.send('API Pi-Mananger funcionando 🚀'));
 
-// ✅ Conexão MongoDB
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
+mongoose.connect(process.env.MONGO_URI)
   .then(() => {
-    console.log('✅ MongoDB conectado com sucesso!');
+    console.log('✅ MongoDB conectado');
     const PORT = process.env.PORT || 5000;
-    app.listen(PORT, () => {
-      console.log(`🚀 Servidor rodando na porta ${PORT}`);
-    });
+    app.listen(PORT, () => console.log(`🚀 Servidor rodando na porta ${PORT}`));
   })
-  .catch(err => console.error('❌ Erro ao conectar ao MongoDB:', err));
+  .catch(err => console.error('❌ Erro MongoDB:', err));

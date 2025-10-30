@@ -11,8 +11,10 @@ import {
 
 const router = express.Router();
 
-router.post('/', criarPlaca);
+// ✅ ESSA ROTA É FUNDAMENTAL
 router.get('/', listarPlacas);
+
+router.post('/', criarPlaca);
 router.get('/status/:status', listarPlacasPorStatus);
 router.put('/enviar/:id', enviarPlaca);
 router.put('/status/:id', atualizarStatus);

@@ -72,6 +72,7 @@ export const listarPlacas = async (req, res) => {
   }
 };
 
+
 // ✅ Enviar placa (para etapa "pagar")
 export const enviarPlaca = async (req, res) => {
   try {
