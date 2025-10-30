@@ -22,7 +22,8 @@ const TIPO_OPTIONS = [
 
 export default function NovaPlaca({ onClose, onCriar }) {
   const [formData, setFormData] = useState({
-    titulo: '',
+    // 🟡 Aqui é o ponto: título inicial já vem preenchido com “Padrão”
+    titulo: 'Padrão',
     largura: '',
     altura: '',
     material: MATERIAL_OPTIONS[0]?.value || 'Lona',
@@ -30,6 +31,7 @@ export default function NovaPlaca({ onClose, onCriar }) {
     quantidade: 1,
     observacao: '',
   });
+
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
   const [feedbackMessage, setFeedbackMessage] = useState({ type: '', text: '' });
@@ -75,7 +77,6 @@ export default function NovaPlaca({ onClose, onCriar }) {
 
       const res = await axios.post(API_URL, payload);
 
-      // ✅ Backend pode retornar 1 objeto ou um array de placas
       let createdCount = 1;
       if (Array.isArray(res.data.placas)) {
         createdCount = res.data.placas.length;
@@ -89,10 +90,7 @@ export default function NovaPlaca({ onClose, onCriar }) {
             : 'Placa criada com sucesso!',
       });
 
-      // ✅ Atualiza lista do pai
       if (onCriar) onCriar(res.data);
-
-      // Fecha modal com pequeno delay para o usuário ver a mensagem
       setTimeout(onClose, 800);
     } catch (err) {
       const errorMsg =

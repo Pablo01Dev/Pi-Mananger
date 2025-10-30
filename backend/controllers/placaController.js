@@ -162,30 +162,48 @@ export const usarPlaca = async (req, res) => {
 
     // 🔹 Calcula nova quantidade
     const novaQuantidade = placa.quantidade - qtdUsada;
-
-    // 🔹 Atualiza a original
     placa.quantidade = novaQuantidade;
 
-    // 🔹 Se zerou, marca como usada
     if (novaQuantidade <= 0) {
       placa.status = 'usada';
     }
 
     await placa.save();
 
-    // 🔹 Cria uma nova placa com status "usada" (representando as aplicadas agora)
-    const placaUsada = new Placa({
+    // 🔍 Verifica se já existe uma placa "usada" igual
+    const placaExistente = await Placa.findOne({
       titulo: placa.titulo,
       largura: placa.largura,
       altura: placa.altura,
       material: placa.material,
       tipo: placa.tipo,
       observacao: placa.observacao,
-      quantidade: qtdUsada,
       status: 'usada',
     });
 
-    await placaUsada.save();
+    let placaUsada;
+
+    if (placaExistente) {
+      // ♻️ Se existir, soma a quantidade
+      placaExistente.quantidade += qtdUsada;
+      await placaExistente.save();
+      placaUsada = placaExistente;
+      console.log('🔁 Placa usada existente atualizada');
+    } else {
+      // 🆕 Caso contrário, cria nova
+      placaUsada = new Placa({
+        titulo: placa.titulo,
+        largura: placa.largura,
+        altura: placa.altura,
+        material: placa.material,
+        tipo: placa.tipo,
+        observacao: placa.observacao,
+        quantidade: qtdUsada,
+        status: 'usada',
+      });
+      await placaUsada.save();
+      console.log('🆕 Nova placa usada criada');
+    }
 
     res.status(200).json({
       message: `Foram movidas ${qtdUsada} unidade(s) para "usadas".`,
@@ -198,4 +216,5 @@ export const usarPlaca = async (req, res) => {
     res.status(500).json({ error: 'Erro ao usar placa: ' + err.message });
   }
 };
+
 
