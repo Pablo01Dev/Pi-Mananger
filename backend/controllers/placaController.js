@@ -1,5 +1,6 @@
 import Placa from '../models/Placa.js';
 
+// ✅ Criar ou somar placa existente
 export const criarPlaca = async (req, res) => {
   try {
     const { titulo, largura, altura, material, tipo, quantidade, observacao } = req.body;
@@ -23,7 +24,6 @@ export const criarPlaca = async (req, res) => {
       status: 'produzir'
     };
 
-    // Só compara observação se ela existir
     if (observacaoNorm) {
       query.observacao = { $regex: new RegExp(`^${observacaoNorm}$`, 'i') };
     }
@@ -62,6 +62,37 @@ export const criarPlaca = async (req, res) => {
   }
 };
 
+// ✅ Listar todas as placas
+export const listarPlacas = async (req, res) => {
+  try {
+    const placas = await Placa.find();
+    res.json(placas);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
+// ✅ Enviar placa (para etapa "pagar")
+export const enviarPlaca = async (req, res) => {
+  try {
+    const placa = await Placa.findById(req.params.id);
+    if (!placa) return res.status(404).json({ error: 'Placa não encontrada' });
+
+    const precoPorMetroQuadrado = 35;
+    const metragem = (placa.largura / 100) * (placa.altura / 100);
+    const valorUnitario = metragem * precoPorMetroQuadrado;
+    const valorTotal = valorUnitario * placa.quantidade;
+
+    placa.status = 'pagar';
+    placa.dataEnvio = new Date();
+    placa.valor = valorTotal;
+
+    await placa.save();
+    res.json(placa);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+};
 
 // ✅ Atualizar status
 export const atualizarStatus = async (req, res) => {
@@ -111,7 +142,6 @@ export const deletarPlaca = async (req, res) => {
 // ✅ Usar placa (com decremento de quantidade)
 export const usarPlaca = async (req, res) => {
   console.log("🧩 ROTA /usar/:id ACESSADA");
-  console.log("📦 Params:", req.params);
   console.log("📩 Body recebido:", req.body);
 
   try {
@@ -121,22 +151,16 @@ export const usarPlaca = async (req, res) => {
     const placa = await Placa.findById(id);
     if (!placa) return res.status(404).json({ error: 'Placa não encontrada.' });
 
-    if (qtdUsada <= 0) {
-      return res.status(400).json({ error: 'Quantidade inválida.' });
-    }
+    if (qtdUsada <= 0) return res.status(400).json({ error: 'Quantidade inválida.' });
+    if (placa.quantidade < qtdUsada) return res.status(400).json({ error: 'Quantidade insuficiente disponível.' });
 
-    if (placa.quantidade < qtdUsada) {
-      return res.status(400).json({ error: 'Quantidade insuficiente disponível.' });
-    }
-
-    // 🧮 Cálculo da nova quantidade
     const novaQuantidade = placa.quantidade - qtdUsada;
 
     if (novaQuantidade > 0) {
       placa.quantidade = novaQuantidade;
     } else {
       placa.quantidade = 0;
-      placa.status = 'usada'; // 👈 valor válido no schema
+      placa.status = 'usada';
     }
 
     await placa.save();
