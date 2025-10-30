@@ -1,7 +1,6 @@
 import express from 'express';
 import {
     criarPlaca,
-    listarPlacas,
     atualizarStatus,
     listarPlacasPorStatus,
     deletarPlaca,
