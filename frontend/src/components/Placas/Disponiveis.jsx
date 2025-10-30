@@ -36,14 +36,35 @@ export default function Disponiveis() {
   const confirmarUso = async (placa, qtdUsada) => {
     try {
       const quantidadeUsada = Number(qtdUsada) || 1;
-
       console.log('📤 Enviando uso:', { quantidadeUsada });
 
       const res = await api.put(`/placas/usar/${placa._id}`, { quantidadeUsada });
 
-      setPlacas(prev =>
-        prev.map(p => (p._id === placa._id ? res.data.placa : p))
-      );
+      // Captura ambos retornos (pode vir como placaAtualizada + placaNova)
+      const placaAtualizada = res.data.placaAtualizada || res.data.placa;
+      const novaPlacaUsada = res.data.placaNova;
+
+      // Protege contra dados indefinidos
+      if (!placaAtualizada || !placaAtualizada._id) return;
+
+      setPlacas((prev) => {
+        // Atualiza a original
+        let atualizadas = prev.map((p) =>
+          p._id === placa._id ? placaAtualizada : p
+        );
+
+        // Se foi criada uma nova placa usada, adiciona ao array
+        if (
+          novaPlacaUsada &&
+          novaPlacaUsada._id &&
+          novaPlacaUsada.tipo &&
+          novaPlacaUsada.status
+        ) {
+          atualizadas.push(novaPlacaUsada);
+        }
+
+        return atualizadas;
+      });
 
       setPlacaSelecionada(null);
     } catch (error) {
@@ -56,7 +77,7 @@ export default function Disponiveis() {
   const handleDelete = async (id) => {
     try {
       await api.delete(`/placas/${id}`);
-      setPlacas(prev => prev.filter(p => p._id !== id));
+      setPlacas((prev) => prev.filter((p) => p._id !== id));
     } catch (error) {
       console.error('Erro ao deletar a placa:', error);
       alert('Falha ao deletar a placa.');
@@ -68,8 +89,9 @@ export default function Disponiveis() {
     <div className={styles.container}>
       <div className={styles.gridCategorias}>
         {categorias.map((categoria) => {
+          // Proteção contra undefined e filtragem estável
           const placasFiltradas = placas.filter(
-            (p) => p.tipo === categoria && p.status === 'pago'
+            (p) => p?.tipo === categoria && p?.status === 'pago'
           );
 
           return (
