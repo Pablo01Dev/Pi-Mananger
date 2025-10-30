@@ -39,15 +39,7 @@ export default function Disponiveis() {
 
       console.log('📤 Enviando uso:', { quantidadeUsada });
 
-      const res = await api.put(
-        `/placas/usar/${placa._id}`,
-        JSON.stringify({ quantidadeUsada }), // força corpo JSON puro
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        }
-      );
+      const res = await api.put(`/placas/usar/${placa._id}`, { quantidadeUsada });
 
       setPlacas(prev =>
         prev.map(p => (p._id === placa._id ? res.data.placa : p))
@@ -55,8 +47,8 @@ export default function Disponiveis() {
 
       setPlacaSelecionada(null);
     } catch (error) {
-      console.error('❌ Erro ao usar placa:', error);
-      alert('Falha ao usar placa.');
+      console.error('❌ Erro ao usar placa:', error.response?.data || error.message);
+      alert('Falha ao usar placa: ' + (error.response?.data?.error || error.message));
     }
   };
 
