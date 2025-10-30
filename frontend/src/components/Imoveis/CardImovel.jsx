@@ -35,6 +35,7 @@ export default function CardImovel({ imovel, onAtualizar, onExcluir }) {
       className={styles.cardImovel}
       onClick={() => setIsModalOpen(true)}
     >
+      {/* Status */}
       <div className={styles.statusBar}>
         <p className={styles.statusLabel}>{imovel.status || '—'}</p>
         <div
@@ -43,18 +44,32 @@ export default function CardImovel({ imovel, onAtualizar, onExcluir }) {
         />
       </div>
 
+      {/* Título */}
       <h3 className={styles.titulo}>{imovel.titulo || 'Sem título'}</h3>
 
+      {/* 🏠 Endereço */}
+      {imovel.endereco && (
+        <p
+          className={styles.endereco}
+          title={imovel.endereco}
+        >
+          📍 {imovel.endereco}
+        </p>
+      )}
+
+      {/* Descrição */}
       {imovel.descricao && (
         <p className={styles.descriptCard}>{imovel.descricao}</p>
       )}
 
+      {/* Data */}
       <div className={styles.date}>
         {imovel.criadoEm && (
           <p>Criado em: {formatDate(imovel.criadoEm)}</p>
         )}
       </div>
 
+      {/* Modal */}
       {isModalOpen && (
         <ModalEditarImovel
           imovel={imovel}
